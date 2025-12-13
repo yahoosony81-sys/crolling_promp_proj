@@ -327,6 +327,18 @@
   - [ ] 중복 URL 체크
   - [ ] 데이터 검증 로직
   - [ ] 에러 핸들링
+  ---
+  - [x] 크롤링/스크래핑 기능 구현 세부 작업 (plan 모드 build)
+    - [x] `src/lib/types/crawler.ts` 크롤링 관련 타입 정의 생성 (ScrapedItemData, CrawlConfig, TrendKeyword, CrawlResult, CrawlStatus)
+    - [x] `src/lib/utils/crawler.ts` 크롤링 유틸리티 함수 구현 (네이버 뉴스 크롤링, HTML 파싱, 데이터 검증, 중복 체크)
+    - [x] `src/lib/utils/ai-summary.ts` AI 요약 유틸리티 구현 (OpenAI API 연동, 요약 필요성 판단, 하이브리드 요약)
+    - [x] `src/lib/utils/trend-keywords.ts` 트렌드 키워드 수집 함수 구현 (카테고리별 키워드 수집, 패키지 제목/요약 생성)
+    - [x] `src/lib/utils/trend-pack.ts` 트렌드 패키지 생성 유틸리티 구현 (trend_packs 생성, pack_prompts 연결)
+    - [x] `src/lib/utils/scraped-items.ts` 스크랩 아이템 저장 유틸리티 구현 (scraped_items 일괄 저장, 중복 체크, 삭제 기능)
+    - [x] `src/app/api/crawl/run/route.ts` 크롤링 실행 API 라우트 생성 (POST 메서드, 내부 API 키 인증, 카테고리별 크롤링 실행)
+    - [x] `src/app/api/crawl/status/route.ts` 크롤링 상태 조회 API 라우트 생성 (GET 메서드, 최근 실행 시간 및 통계 조회)
+    - [x] `vercel.json` Vercel Cron 설정 (주 1회 자동 실행 스케줄: 매주 월요일 오전 2시)
+    - [x] `cheerio` 패키지 설치 (HTML 파싱용)
 
 ## 유틸리티 및 헬퍼 함수
 - [ ] `lib/utils/prompt.ts` 프롬프트 관련 유틸
