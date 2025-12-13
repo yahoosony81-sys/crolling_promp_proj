@@ -271,9 +271,18 @@
     - [x] 각 페이지에서 개별 Header import 제거 (page.tsx, free/page.tsx, trends/page.tsx, packs/[id]/page.tsx, pricing/page.tsx, account/page.tsx)
 
 ## 인증 및 구독 기능
-- [ ] Clerk 인증 통합
-  - [ ] 로그인/회원가입 페이지
-  - [ ] 사용자 프로필 관리
+- [x] Clerk 인증 통합
+  - [x] 로그인/회원가입 페이지
+  - [x] 사용자 프로필 관리
+  ---
+  - [x] Clerk 인증 통합 구현 세부 작업 (plan 모드 build)
+    - [x] `src/app/sign-up/page.tsx` 회원가입 페이지 생성 (Clerk SignUp 컴포넌트 사용, 한국어 로컬라이제이션, 리다이렉트 처리)
+    - [x] `src/app/login/page.tsx` 로그인 페이지 Clerk 통합 (Clerk SignIn 컴포넌트로 변경, 한국어 로컬라이제이션, 리다이렉트 처리)
+    - [x] `src/app/profile/page.tsx` 사용자 프로필 관리 페이지 생성 (Clerk UserProfile 컴포넌트 사용, 인증 체크, dynamic 설정)
+    - [x] `src/middleware.ts` 보호된 라우트 업데이트 (/trends, /packs, /account, /profile 추가, /sign-up 인증 경로 추가)
+    - [x] `src/components/profile.tsx` 프로필 페이지 링크 추가
+    - [x] `src/app/login/actions.ts` 기존 Supabase 인증 코드 제거
+    - [x] `src/app/auth/confirm/route.ts` 기존 Supabase 인증 확인 라우트 제거
 - [ ] 구독 상태 관리
   - [x] 구독 체크 유틸리티 함수
   - [x] 구독 만료 체크 로직

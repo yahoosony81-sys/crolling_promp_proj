@@ -75,6 +75,12 @@ export function Profile() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
+          <Link href="/profile" className="flex w-full items-center">
+            <LuUser className="mr-2 size-4" />
+            프로필 관리
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
           <Link href="/account" className="flex w-full items-center">
             <LuUser className="mr-2 size-4" />
             내 계정

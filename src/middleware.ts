@@ -6,10 +6,13 @@ const isProtectedRoute = createRouteMatcher([
   "/dashboard(.*)",
   "/profile(.*)",
   "/settings(.*)",
+  "/trends(.*)",
+  "/packs(.*)",
+  "/account(.*)",
 ]);
 
 // 인증된 사용자가 접근하면 안 되는 경로
-const isAuthRoute = createRouteMatcher(["/login(.*)"]);
+const isAuthRoute = createRouteMatcher(["/login(.*)", "/sign-up(.*)"]);
 
 export default clerkMiddleware(async (auth, request: NextRequest) => {
   const { userId } = await auth();
@@ -22,7 +25,7 @@ export default clerkMiddleware(async (auth, request: NextRequest) => {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // 인증된 사용자가 로그인 페이지 접근 시 홈으로 리다이렉트
+  // 인증된 사용자가 로그인/회원가입 페이지 접근 시 홈으로 리다이렉트
   if (isAuthRoute(request) && userId) {
     return NextResponse.redirect(new URL("/", request.url));
   }
