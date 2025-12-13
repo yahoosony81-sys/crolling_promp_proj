@@ -65,3 +65,82 @@ export interface TossPaymentSession {
   currency: string;
 }
 
+/**
+ * Toss Payments 빌링키 발급 요청 타입
+ */
+export interface TossBillingKeyRequest {
+  authKey: string;
+  customerKey: string;
+}
+
+/**
+ * Toss Payments 빌링키 발급 응답 타입
+ */
+export interface TossBillingKeyResponse {
+  billingKey: string;
+  customerKey: string;
+  method: string;
+  card: {
+    issuerCode: string;
+    acquirerCode: string;
+    number: string;
+    cardType: string;
+    ownerType: string;
+  };
+}
+
+/**
+ * Toss Payments 자동결제 승인 요청 타입
+ */
+export interface TossBillingPaymentRequest {
+  billingKey: string;
+  customerKey: string;
+  amount: number;
+  orderId: string;
+  orderName: string;
+  customerEmail?: string;
+  customerName?: string;
+}
+
+/**
+ * Toss Payments 자동결제 승인 응답 타입
+ */
+export interface TossBillingPaymentResponse {
+  mId: string;
+  version: string;
+  paymentKey: string;
+  orderId: string;
+  orderName: string;
+  currency: string;
+  method: string;
+  totalAmount: number;
+  balanceAmount: number;
+  suppliedAmount: number;
+  vat: number;
+  status: string;
+  requestedAt: string;
+  approvedAt: string;
+  card: {
+    company: string;
+    number: string;
+    installmentPlanMonths: number;
+    isInterestFree: boolean;
+    approveNo: string;
+    useCardPoint: boolean;
+    cardType: string;
+    ownerType: string;
+    acquireStatus: string;
+    receiptUrl: string;
+  };
+}
+
+/**
+ * 결제 세션 생성 응답 타입
+ */
+export interface CreateCheckoutSessionResponse {
+  success: boolean;
+  customerKey: string;
+  successUrl: string;
+  failUrl: string;
+}
+

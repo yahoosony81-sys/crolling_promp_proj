@@ -128,9 +128,7 @@ export function SubscribeCTA() {
             size="lg"
             className="w-full sm:w-auto"
             onClick={() => {
-              // TODO: 결제 연동 구현
-              // 현재는 API 라우트로 리다이렉트
-              router.push("/api/subscriptions/create");
+              router.push("/checkout");
             }}
           >
             구독하기

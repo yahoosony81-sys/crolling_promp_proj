@@ -11,9 +11,30 @@
 # Toss Payments 대시보드 > 개발 > 웹훅 설정에서 확인할 수 있습니다
 TOSS_PAYMENTS_WEBHOOK_SECRET=your_webhook_secret_key
 
-# Toss Payments 시크릿 키 (결제 API 사용 시 필요)
-TOSS_PAYMENTS_SECRET_KEY=your_secret_key
+# Toss Payments 시크릿 키 (서버 사이드 결제 API 사용)
+# Toss Payments 대시보드 > 개발 > API 키에서 확인할 수 있습니다
+# 테스트 환경: test_sk_로 시작하는 키
+# 라이브 환경: live_sk_로 시작하는 키
+TOSS_PAYMENTS_SECRET_KEY=test_sk_xxxxxxxxxxxxx
+
+# Toss Payments 클라이언트 키 (클라이언트 사이드 결제 위젯 사용)
+# Toss Payments 대시보드 > 개발 > API 키에서 확인할 수 있습니다
+# 테스트 환경: test_ck_로 시작하는 키
+# 라이브 환경: live_ck_로 시작하는 키
+NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY=test_ck_xxxxxxxxxxxxx
+
+# 애플리케이션 URL (결제 성공/실패 리다이렉트에 사용)
+# 로컬 개발: http://localhost:3000
+# 프로덕션: https://your-domain.com
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
+
+### 환경 변수 설명
+
+- **TOSS_PAYMENTS_WEBHOOK_SECRET**: 웹훅 요청의 서명을 검증하는 데 사용됩니다.
+- **TOSS_PAYMENTS_SECRET_KEY**: 서버 사이드에서 결제 API를 호출할 때 사용됩니다. **절대 클라이언트에 노출되지 않도록 주의하세요.**
+- **NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY**: 클라이언트 사이드에서 결제 위젯을 초기화할 때 사용됩니다. `NEXT_PUBLIC_` 접두사로 인해 클라이언트에 노출됩니다.
+- **NEXT_PUBLIC_APP_URL**: 결제 성공/실패 후 리다이렉트할 URL입니다.
 
 ## 웹훅 엔드포인트
 
@@ -26,14 +47,81 @@ https://your-domain.com/api/webhooks/toss
 
 ## Toss Payments 대시보드 설정
 
+### 1단계: Toss Payments 대시보드 접속
+
 1. [Toss Payments 대시보드](https://dashboard.tosspayments.com)에 로그인
-2. **개발** > **웹훅** 메뉴로 이동
-3. **웹훅 URL**에 위 엔드포인트 URL 입력
-4. **웹훅 시크릿 키** 복사하여 환경 변수에 설정
-5. 수신할 이벤트 선택:
-   - `billing.approved` (정기결제 성공)
-   - `billing.failed` (정기결제 실패)
-   - `billing.canceled` (정기결제 취소)
+   - 아직 계정이 없다면 회원가입을 먼저 진행하세요
+   - 테스트 환경과 라이브 환경이 분리되어 있습니다
+
+### 2단계: 웹훅 엔드포인트 생성
+
+1. 대시보드 왼쪽 사이드바에서 **개발** 메뉴 클릭
+2. **웹훅** 메뉴 클릭
+3. **웹훅 추가** 또는 **+ 웹훅 추가** 버튼 클릭
+
+### 3단계: 웹훅 정보 입력
+
+1. **웹훅 URL** 입력란에 다음 URL 입력:
+   - 로컬 개발 환경: `http://localhost:3000/api/webhooks/toss` (ngrok 등 터널링 도구 사용 필요)
+   - 프로덕션 환경: `https://your-domain.com/api/webhooks/toss`
+   
+   **참고**: 로컬 개발 환경에서는 ngrok 같은 터널링 도구를 사용해야 Toss Payments가 웹훅을 전송할 수 있습니다.
+   ```bash
+   # ngrok 설치 후 실행
+   ngrok http 3000
+   # 생성된 URL을 웹훅 URL로 사용 (예: https://abc123.ngrok.io/api/webhooks/toss)
+   ```
+
+2. **웹훅 이름** 입력 (선택사항, 예: "TrendScrape Prompt 웹훅")
+
+### 4단계: 수신할 이벤트 선택
+
+다음 이벤트들을 체크박스로 선택:
+
+- ✅ `billing.approved` (정기결제 성공)
+- ✅ `billing.failed` (정기결제 실패)
+- ✅ `billing.canceled` (정기결제 취소)
+- ✅ `billing.ready` (정기결제 준비 완료, 선택사항)
+
+### 5단계: 웹훅 저장 및 시크릿 키 확인
+
+1. **저장** 또는 **생성** 버튼 클릭
+2. 웹훅이 생성되면 웹훅 목록에서 해당 웹훅을 클릭하여 상세 페이지로 이동
+3. **웹훅 시크릿 키** 섹션 찾기
+   - 시크릿 키는 보안상 한 번만 표시될 수 있습니다
+   - **표시** 또는 **Reveal** 버튼을 클릭하여 시크릿 키 확인
+4. 시크릿 키를 복사 (형식: `whsec_`로 시작하는 긴 문자열)
+   - 예시: `whsec_AbCdEf1234567890...`
+
+### 6단계: 환경 변수에 설정
+
+복사한 시크릿 키를 `.env.local` 파일에 추가:
+
+```bash
+TOSS_PAYMENTS_WEBHOOK_SECRET=whsec_복사한_값_여기에_붙여넣기
+```
+
+**중요 보안 사항:**
+- 웹훅 시크릿 키는 **절대 공개 저장소에 커밋하지 마세요**
+- `.env.local` 파일은 `.gitignore`에 포함되어 있어야 합니다
+- 시크릿 키를 잃어버린 경우, 웹훅을 삭제하고 새로 생성해야 합니다
+
+### 웹훅 시크릿 키를 찾을 수 없는 경우
+
+1. **웹훅이 생성되지 않았는지 확인**
+   - 웹훅 목록에서 해당 웹훅이 있는지 확인
+   - 없다면 위의 2-5단계를 다시 진행
+
+2. **웹훅 상세 페이지 확인**
+   - 웹훅 목록에서 해당 웹훅을 클릭하여 상세 페이지로 이동
+   - **설정** 또는 **Settings** 탭에서 시크릿 키 확인
+
+3. **시크릿 키가 이미 표시되었는지 확인**
+   - 일부 경우 시크릿 키는 한 번만 표시됩니다
+   - 이미 표시되었다면 웹훅을 삭제하고 새로 생성해야 합니다
+
+4. **Toss Payments 고객센터 문의**
+   - 문제가 지속되면 Toss Payments 고객센터(1544-7772, support@tosspayments.com)로 문의
 
 ## 지원하는 웹훅 이벤트
 
@@ -99,10 +187,37 @@ https://your-domain.com/api/webhooks/toss
 
 현재 구현은 idempotency 키를 사용하지 않습니다. 동일한 이벤트가 여러 번 전송될 경우를 대비하여 향후 구현이 필요할 수 있습니다.
 
+## 결제 연동 설정
+
+### Toss Payments 대시보드에서 API 키 발급
+
+1. [Toss Payments 대시보드](https://dashboard.tosspayments.com)에 로그인
+2. **개발** > **API 키** 메뉴로 이동
+3. **시크릿 키**와 **클라이언트 키** 확인
+   - 시크릿 키: 서버 사이드에서 사용 (`TOSS_PAYMENTS_SECRET_KEY`)
+   - 클라이언트 키: 클라이언트 사이드에서 사용 (`NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY`)
+4. 환경 변수에 설정
+
+### 테스트 결제
+
+테스트 환경에서는 다음 테스트 카드 번호를 사용할 수 있습니다:
+
+- **카드 번호**: 1234-5678-9012-3456 (앞 6자리만 유효해도 됨)
+- **인증번호**: 000000 (테스트 환경에서는 항상 000000)
+
+### 자동결제 계약
+
+자동결제(빌링) 기능을 사용하려면 Toss Payments와 별도 계약이 필요합니다.
+
+- 테스트 환경: 자동결제 계약 없이도 테스트 가능
+- 라이브 환경: Toss Payments 고객센터(1544-7772, support@tosspayments.com)로 문의
+
 ## 참고 자료
 
 - [Toss Payments 웹훅 문서](https://docs.tosspayments.com/reference/webhook-api)
 - [Toss Payments 정기결제 문서](https://docs.tosspayments.com/guides/billing)
+- [Toss Payments 자동결제 가이드](https://docs.tosspayments.com/guides/billing)
+- [Toss Payments JavaScript SDK](https://docs.tosspayments.com/reference/js-sdk)
 
 ---
 

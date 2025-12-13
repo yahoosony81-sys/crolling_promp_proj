@@ -283,14 +283,36 @@
     - [x] `src/components/profile.tsx` 프로필 페이지 링크 추가
     - [x] `src/app/login/actions.ts` 기존 Supabase 인증 코드 제거
     - [x] `src/app/auth/confirm/route.ts` 기존 Supabase 인증 확인 라우트 제거
-- [ ] 구독 상태 관리
+- [x] 구독 상태 관리
   - [x] 구독 체크 유틸리티 함수
   - [x] 구독 만료 체크 로직
-  - [ ] 구독 갱신 로직
+  - [x] 구독 갱신 로직
+  ---
+  - [x] 구독 상태 관리 구현 세부 작업 (plan 모드 build)
+    - [x] `src/lib/utils/subscription.ts` 만료된 구독 처리 함수 추가 (`expireSubscriptions()`)
+    - [x] `src/lib/utils/subscription.ts` 만료 예정 구독 조회 함수 추가 (`getExpiringSubscriptions()`)
+    - [x] `src/lib/utils/subscription.ts` 구독 갱신 함수 추가 (`renewSubscription()`)
+    - [x] `src/lib/utils/subscription.ts` 구독 상태 업데이트 함수 추가 (`updateSubscriptionStatus()`)
+    - [x] `src/app/api/subscriptions/renew/route.ts` 구독 갱신 API 라우트 생성 (POST 메서드, 인증 체크, 결제 연동 준비)
+    - [x] `src/app/api/subscriptions/expire/route.ts` 만료된 구독 처리 배치 작업 API 라우트 생성 (POST 메서드, 내부 API 키 인증)
+    - [x] `src/app/api/subscriptions/expiring/route.ts` 만료 예정 구독 조회 API 라우트 생성 (GET 메서드, 쿼리 파라미터 days 지원, 내부 API 키 인증)
 - [ ] 결제 연동
   - [ ] 결제 프로바이더 선택 및 설정 (Stripe/Toss Payments)
   - [ ] 결제 페이지 구현
   - [ ] 결제 성공/실패 처리
+  ---
+  - [x] 결제 연동 구현 세부 작업 (plan 모드 build)
+    - [x] `src/lib/toss-payments/client.ts` Toss Payments 서버 클라이언트 유틸리티 함수 생성 (빌링키 발급, 자동결제 승인)
+    - [x] `src/lib/types/payment.ts` Toss Payments 관련 타입 정의 추가 (빌링키 발급 요청/응답, 자동결제 승인 요청/응답)
+    - [x] `src/app/api/subscriptions/create/route.ts` 구독 생성 API 구현 (결제 세션 정보 반환)
+    - [x] `src/app/api/subscriptions/billing-key/route.ts` 빌링키 발급 및 첫 결제 실행 API 라우트 생성
+    - [x] `src/app/checkout/page.tsx` 결제 페이지 구현 (카드 등록창 표시)
+    - [x] `src/components/checkout/payment-widget.tsx` 결제 위젯 컴포넌트 생성 (Toss Payments JavaScript SDK 사용)
+    - [x] `src/app/checkout/success/page.tsx` 결제 성공 페이지 구현 (빌링키 발급 및 첫 결제 처리)
+    - [x] `src/components/checkout/checkout-success-content.tsx` 결제 성공 콘텐츠 컴포넌트 생성 (빌링키 발급 및 결제 처리 로직)
+    - [x] `src/app/checkout/cancel/page.tsx` 결제 취소 페이지 구현
+    - [x] `src/components/pricing/subscribe-cta.tsx` 구독 CTA 컴포넌트 업데이트 (결제 페이지로 리다이렉트)
+    - [x] `docs/WEBHOOK_SETUP.md` 환경 변수 설정 가이드 업데이트 (결제 API 키 설정 방법, 테스트 결제 안내 추가)
 
 ## 크롤링/스크래핑 기능 (백엔드)
 - [ ] 크롤링 스크립트 개발

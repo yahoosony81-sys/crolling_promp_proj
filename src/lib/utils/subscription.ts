@@ -288,3 +288,187 @@ export async function cancelSubscriptionFromWebhook(
   return data;
 }
 
+/**
+ * 만료된 구독을 처리하는 함수
+ * 
+ * current_period_end가 지난 구독을 찾아서 상태를 업데이트합니다.
+ * - cancel_at_period_end가 true인 경우: status를 "canceled"로 변경
+ * - 그 외의 경우: status를 "past_due"로 변경 (결제 실패로 간주)
+ * 
+ * @returns 업데이트된 구독 목록
+ */
+export async function expireSubscriptions(): Promise<Subscription[]> {
+  const supabase = await createClient();
+  const now = new Date().toISOString();
+
+  // 만료된 구독 조회 (current_period_end가 지난 구독)
+  const { data: expiredSubscriptions, error: fetchError } = await supabase
+    .from("subscriptions")
+    .select("*")
+    .lt("current_period_end", now)
+    .in("status", ["active", "past_due"]);
+
+  if (fetchError) {
+    console.error("Error fetching expired subscriptions:", fetchError);
+    return [];
+  }
+
+  if (!expiredSubscriptions || expiredSubscriptions.length === 0) {
+    return [];
+  }
+
+  const updatedSubscriptions: Subscription[] = [];
+
+  // 각 구독을 상태에 따라 업데이트
+  for (const subscription of expiredSubscriptions) {
+    let newStatus: "canceled" | "past_due";
+
+    if (subscription.cancel_at_period_end) {
+      // 취소 예정이었던 경우 완전히 취소 처리
+      newStatus = "canceled";
+    } else {
+      // 그 외의 경우 결제 대기 상태로 변경
+      newStatus = "past_due";
+    }
+
+    const { data: updated, error: updateError } = await supabase
+      .from("subscriptions")
+      .update({
+        status: newStatus,
+        canceled_at: newStatus === "canceled" ? now : subscription.canceled_at,
+      })
+      .eq("id", subscription.id)
+      .select()
+      .single();
+
+    if (updateError) {
+      console.error(
+        `Error updating subscription ${subscription.id}:`,
+        updateError
+      );
+      continue;
+    }
+
+    if (updated) {
+      updatedSubscriptions.push(updated);
+    }
+  }
+
+  return updatedSubscriptions;
+}
+
+/**
+ * 만료 예정 구독 조회
+ * 
+ * @param days - 만료 예정일까지의 일수 (기본값: 7일)
+ * @returns 만료 예정 구독 목록
+ */
+export async function getExpiringSubscriptions(
+  days: number = 7
+): Promise<Subscription[]> {
+  const supabase = await createClient();
+  const now = new Date();
+  const futureDate = new Date();
+  futureDate.setDate(futureDate.getDate() + days);
+
+  const { data, error } = await supabase
+    .from("subscriptions")
+    .select("*")
+    .eq("status", "active")
+    .gte("current_period_end", now.toISOString())
+    .lte("current_period_end", futureDate.toISOString())
+    .order("current_period_end", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching expiring subscriptions:", error);
+    return [];
+  }
+
+  return data || [];
+}
+
+/**
+ * 구독 갱신 함수
+ * 
+ * 사용자의 구독을 1개월 연장합니다.
+ * - current_period_start를 이전 current_period_end로 설정
+ * - current_period_end를 1개월 연장
+ * - status를 "active"로 유지
+ * - cancel_at_period_end가 true인 경우 false로 변경 (갱신 시 취소 예정 해제)
+ * 
+ * @param userId - 사용자 ID (Clerk user ID)
+ * @returns 갱신된 구독 정보 또는 null
+ */
+export async function renewSubscription(
+  userId: string
+): Promise<Subscription | null> {
+  const supabase = await createClient();
+
+  const existingSubscription = await getUserSubscription(userId);
+  if (!existingSubscription) {
+    console.warn("Subscription not found for renewal:", userId);
+    return null;
+  }
+
+  // 현재 기간 종료일을 기준으로 새 기간 설정
+  const periodStart = new Date(existingSubscription.current_period_end);
+  const periodEnd = new Date(periodStart);
+  periodEnd.setMonth(periodEnd.getMonth() + 1);
+
+  const { data, error } = await supabase
+    .from("subscriptions")
+    .update({
+      status: "active",
+      current_period_start: periodStart.toISOString(),
+      current_period_end: periodEnd.toISOString(),
+      cancel_at_period_end: false, // 갱신 시 취소 예정 해제
+      canceled_at: null, // 취소 일시 초기화
+    })
+    .eq("id", existingSubscription.id)
+    .eq("user_id", userId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error renewing subscription:", error);
+    return null;
+  }
+
+  return data;
+}
+
+/**
+ * 구독 상태 업데이트 함수
+ * 
+ * @param subscriptionId - 구독 ID
+ * @param status - 새 상태 ("active" | "past_due" | "canceled")
+ * @param additionalData - 추가 업데이트할 데이터 (선택사항)
+ * @returns 업데이트된 구독 정보 또는 null
+ */
+export async function updateSubscriptionStatus(
+  subscriptionId: string,
+  status: "active" | "past_due" | "canceled",
+  additionalData?: Partial<Subscription>
+): Promise<Subscription | null> {
+  const supabase = await createClient();
+
+  const updateData: Partial<Subscription> = {
+    status,
+    ...additionalData,
+  };
+
+  const { data, error } = await supabase
+    .from("subscriptions")
+    .update(updateData)
+    .eq("id", subscriptionId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error updating subscription status:", error);
+    return null;
+  }
+
+  return data;
+}
+

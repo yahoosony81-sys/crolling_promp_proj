@@ -1,18 +1,26 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { createClient } from "@/lib/supabase/server";
 import { getUserSubscription } from "@/lib/utils/subscription";
+import type { CreateCheckoutSessionResponse } from "@/lib/types/payment";
 
 export const dynamic = "force-dynamic";
 
 /**
  * 구독 생성 API 라우트
  * 
- * TODO: 결제 프로바이더 연동 필요
- * - Stripe: https://stripe.com/docs/payments/checkout
- * - Toss Payments: https://docs.tosspayments.com/
+ * Toss Payments를 사용한 정기결제 구독을 생성합니다.
  * 
- * 현재는 구조만 준비되어 있으며, 실제 결제 연동은 나중에 구현 예정입니다.
+ * 플로우:
+ * 1. 사용자 인증 확인
+ * 2. 기존 활성 구독 체크
+ * 3. Clerk에서 사용자 정보 조회
+ * 4. 결제 세션 정보 반환 (customerKey, successUrl, failUrl)
+ * 5. 클라이언트에서 카드 등록창 표시
+ * 6. 카드 등록 성공 시 successUrl로 리다이렉트 (authKey 포함)
+ * 7. 서버에서 authKey로 빌링키 발급
+ * 8. 빌링키로 첫 결제 실행
+ * 9. 웹훅으로 결제 확인 및 구독 활성화
  */
 export async function POST(request: Request) {
   try {
@@ -40,72 +48,43 @@ export async function POST(request: Request) {
       }
     }
 
-    // TODO: 결제 프로바이더 연동
-    // 1. 결제 세션 생성 (Stripe Checkout 또는 Toss Payments)
-    // 2. 결제 성공 후 구독 생성
-    // 3. 웹훅으로 결제 확인 및 구독 활성화
+    // Clerk에서 사용자 정보 조회
+    const client = await clerkClient();
+    const user = await client.users.getUser(userId);
+    
+    if (!user) {
+      return NextResponse.json(
+        { error: "사용자 정보를 찾을 수 없습니다" },
+        { status: 404 }
+      );
+    }
 
-    // 임시 응답 (실제 결제 연동 전까지)
-    return NextResponse.json(
-      {
-        message: "결제 연동 준비 중입니다",
-        note: "곧 결제 기능이 추가될 예정입니다",
-      },
-      { status: 501 } // Not Implemented
-    );
+    // 환경 변수 확인
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const clientKey = process.env.NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY;
+    
+    if (!clientKey) {
+      console.error("NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY 환경 변수가 설정되지 않았습니다");
+      return NextResponse.json(
+        { error: "결제 설정이 완료되지 않았습니다" },
+        { status: 500 }
+      );
+    }
 
-    /* 실제 구현 예시 (주석 처리)
-    
-    // Stripe 예시
-    const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [{
-        price_data: {
-          currency: 'krw',
-          product_data: {
-            name: 'TrendScrape Prompt 프리미엄 플랜',
-          },
-          unit_amount: 9900,
-          recurring: {
-            interval: 'month',
-          },
-        },
-        quantity: 1,
-      }],
-      mode: 'subscription',
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/account?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing?canceled=true`,
-      client_reference_id: userId,
-    });
+    // 결제 세션 정보 생성
+    // customerKey는 Clerk user ID를 사용
+    const customerKey = userId;
+    const successUrl = `${appUrl}/checkout/success`;
+    const failUrl = `${appUrl}/checkout/cancel`;
 
-    return NextResponse.json({ sessionId: session.id, url: session.url });
-    */
+    const response: CreateCheckoutSessionResponse = {
+      success: true,
+      customerKey,
+      successUrl,
+      failUrl,
+    };
 
-    /* Toss Payments 예시 (주석 처리)
-    
-    const tossPayments = require('@tosspayments/payment-sdk');
-    const client = new tossPayments.Client(
-      process.env.TOSS_PAYMENTS_SECRET_KEY
-    );
-    
-    const billingKey = await client.billing.createBillingKey({
-      customerKey: userId,
-      authKey: 'card', // 또는 'virtual', 'account'
-    });
-    
-    const subscription = await client.billing.createSubscription({
-      billingKey: billingKey.billingKey,
-      customerKey: userId,
-      amount: 9900,
-      orderId: `subscription-${Date.now()}`,
-      orderName: 'TrendScrape Prompt 프리미엄 플랜',
-      customerEmail: user.email,
-      customerName: user.name,
-    });
-    
-    return NextResponse.json({ subscriptionId: subscription.id });
-    */
+    return NextResponse.json(response);
   } catch (error) {
     console.error("Error in subscription create API:", error);
     return NextResponse.json(
