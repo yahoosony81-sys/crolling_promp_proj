@@ -168,6 +168,18 @@
   - [ ] 월 9,900원 플랜 강조
   - [ ] 구독 CTA 버튼
   - [ ] 결제 연동 (Stripe/Toss Payments 등)
+  ---
+  - [ ] `/pricing` 페이지 구현 세부 작업
+    - [x] `src/lib/constants/pricing.ts` 기능 비교 데이터 상수 정의
+    - [x] `src/components/pricing/pricing-table.tsx` 무료 vs 유료 기능 비교 테이블 컴포넌트 생성
+    - [x] `src/components/pricing/plan-highlight.tsx` 월 9,900원 플랜 강조 섹션 컴포넌트 생성
+    - [x] `src/components/pricing/subscribe-cta.tsx` 구독 CTA 컴포넌트 생성 (Clerk 인증 체크 포함)
+    - [x] `src/app/pricing/page.tsx` 메인 페이지 컴포넌트 생성 (Header 통합, 메타데이터, dynamic 설정)
+    - [x] 모든 섹션 컴포넌트를 pricing/page.tsx에 통합
+    - [x] 반응형 디자인 적용 (모바일, 태블릿, 데스크톱)
+    - [x] SEO 메타데이터 설정 (title, description, Open Graph)
+    - [x] `src/app/api/subscriptions/create/route.ts` 결제 API 라우트 스켈레톤 생성
+    - [x] `src/lib/types/payment.ts` 결제 관련 타입 정의
 - [ ] `/account` 내 계정 페이지
   - [ ] 구독 상태 표시
   - [ ] 결제 정보 표시
@@ -185,8 +197,8 @@
   - [ ] GET: 트렌드 패키지 상세 조회
   - [ ] GET: 스크랩된 아이템 목록 조회
 - [ ] `/api/subscriptions` 구독 관련 API
-  - [ ] GET: 구독 상태 조회
-  - [ ] POST: 구독 생성
+  - [x] GET: 구독 상태 조회 (`/api/subscriptions/create` GET 메서드)
+  - [x] POST: 구독 생성 (`/api/subscriptions/create` POST 메서드 - 구조만 준비, 결제 연동은 나중에 구현)
   - [ ] PATCH: 구독 취소
   - [ ] GET: 결제 내역 조회
 - [ ] `/api/webhooks` 웹훅 처리
@@ -201,7 +213,7 @@
   - [x] `CopyButton` 복사 버튼 컴포넌트
   - [x] `CategoryFilter` 카테고리 필터 컴포넌트
   - [x] `SubscriptionGate` 구독 체크 게이트 컴포넌트
-  - [ ] `PricingTable` 가격 비교 테이블 컴포넌트
+  - [x] `PricingTable` 가격 비교 테이블 컴포넌트
 - [ ] 레이아웃 컴포넌트
   - [ ] `Header` 헤더 컴포넌트 (네비게이션)
   - [ ] `Footer` 푸터 컴포넌트
