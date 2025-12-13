@@ -203,19 +203,34 @@
     - [x] SEO 메타데이터 설정 (title, description, robots)
 
 ## API 라우트
-- [ ] `/api/prompts` 프롬프트 관련 API
-  - [ ] GET: 무료 프롬프트 목록 조회
-  - [ ] GET: 프롬프트 상세 조회
-  - [ ] POST: 프롬프트 사용 기록 (prompt_usages)
-- [ ] `/api/trends` 트렌드 패키지 관련 API
-  - [ ] GET: 트렌드 패키지 목록 조회
-  - [ ] GET: 트렌드 패키지 상세 조회
-  - [ ] GET: 스크랩된 아이템 목록 조회
-- [ ] `/api/subscriptions` 구독 관련 API
+- [x] `/api/prompts` 프롬프트 관련 API
+  - [x] GET: 무료 프롬프트 목록 조회
+  - [x] GET: 프롬프트 상세 조회
+  - [x] POST: 프롬프트 사용 기록 (prompt_usages)
+  ---
+  - [x] `/api/prompts` API 구현 세부 작업 (plan 모드 build)
+    - [x] `src/app/api/prompts/route.ts` GET 라우트 구현 (무료 프롬프트 목록 조회, 카테고리 필터링, 페이지네이션 지원)
+    - [x] `src/app/api/prompts/[id]/route.ts` GET 라우트 구현 (프롬프트 상세 조회, 무료/유료 구분, 인증 체크)
+    - [x] 에러 처리 및 HTTP 상태 코드 구현 (400, 401, 404, 500)
+    - [x] 타입 안정성 확보 (Database 타입 사용, 응답 타입 정의)
+    - [x] UUID 형식 검증 및 쿼리 파라미터 검증 로직 구현
+- [x] `/api/trends` 트렌드 패키지 관련 API
+  - [x] GET: 트렌드 패키지 목록 조회
+  - [x] GET: 트렌드 패키지 상세 조회
+  - [x] GET: 스크랩된 아이템 목록 조회
+  ---
+  - [ ] `/api/trends` API 구현 세부 작업 (plan 모드 build)
+    - [x] `src/app/api/trends/route.ts` GET 라우트 구현 (트렌드 패키지 목록 조회, 인증/구독 체크, 카테고리/주차 필터링, 페이지네이션 지원)
+    - [x] `src/app/api/trends/[id]/route.ts` GET 라우트 구현 (트렌드 패키지 상세 조회, 인증/구독 체크, UUID 검증)
+    - [x] `src/app/api/trends/[id]/scraped-items/route.ts` GET 라우트 구현 (스크랩된 아이템 목록 조회, 인증/구독 체크, 페이지네이션 지원)
+    - [x] 인증 및 구독 체크 로직 구현 (모든 API에 공통 적용)
+    - [x] 에러 처리 및 HTTP 상태 코드 구현 (400, 401, 403, 404, 500)
+    - [x] 타입 안정성 확보 (Database 타입 사용, 응답 타입 정의)
+- [x] `/api/subscriptions` 구독 관련 API
   - [x] GET: 구독 상태 조회 (`/api/subscriptions/create` GET 메서드)
   - [x] POST: 구독 생성 (`/api/subscriptions/create` POST 메서드 - 구조만 준비, 결제 연동은 나중에 구현)
   - [x] PATCH: 구독 취소 (`/api/subscriptions/cancel` PATCH 메서드)
-  - [ ] GET: 결제 내역 조회
+  - [x] GET: 결제 내역 조회 (`/api/subscriptions/payment-history`)
 - [ ] `/api/webhooks` 웹훅 처리
   - [ ] 결제 웹훅 처리
   - [ ] 구독 갱신 웹훅 처리
