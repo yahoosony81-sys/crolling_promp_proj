@@ -80,13 +80,27 @@
     - [x] 모든 섹션 컴포넌트를 `page.tsx`에 통합
     - [x] 반응형 디자인 적용 (모바일, 태블릿, 데스크톱)
     - [x] 메타데이터 및 SEO 설정 (title, description)
-- [ ] `/free` 무료 프롬프트 10선 페이지
-  - [ ] 프롬프트 리스트 컴포넌트
-  - [ ] 카테고리 필터 기능
-  - [ ] 프롬프트 복사 버튼
-  - [ ] 프롬프트 상세 모달/페이지
-  - [ ] 유료 전환 CTA 배치
-  - [ ] 사용 기록 추적 (prompt_usages)
+- [x] `/free` 무료 프롬프트 10선 페이지
+  - [x] 프롬프트 리스트 컴포넌트
+  - [x] 카테고리 필터 기능
+  - [x] 프롬프트 복사 버튼
+  - [x] 프롬프트 상세 모달/페이지
+  - [x] 유료 전환 CTA 배치
+  - [x] 사용 기록 추적 (prompt_usages)
+  ---
+  - [ ] 무료 프롬프트 페이지 구현 세부 작업
+    - [x] `src/app/free/page.tsx` 메인 페이지 컴포넌트 및 데이터 페칭 로직 구현
+    - [x] `src/components/prompts/prompt-card.tsx` 프롬프트 카드 컴포넌트 생성
+    - [x] `src/components/prompts/category-filter.tsx` 카테고리 필터 컴포넌트 생성
+    - [x] `src/components/prompts/copy-button.tsx` 복사 버튼 컴포넌트 생성 (클립보드 API, 토스트 피드백)
+    - [x] `src/components/prompts/prompt-detail-modal.tsx` 프롬프트 상세 모달 컴포넌트 생성
+    - [x] `src/components/prompts/prompt-list.tsx` 프롬프트 리스트 컴포넌트 생성 (필터링 기능 포함)
+    - [x] `src/app/api/prompts/usage/route.ts` 사용 기록 API 라우트 생성
+    - [x] `src/components/prompts/upgrade-cta.tsx` 유료 전환 CTA 컴포넌트 생성
+    - [x] 모든 컴포넌트를 free/page.tsx에 통합
+    - [x] 반응형 디자인 적용 (모바일, 태블릿, 데스크톱)
+    - [x] 메타데이터 및 SEO 설정
+    - [x] Toaster 컴포넌트를 layout.tsx에 추가 (토스트 알림 지원)
 - [ ] `/trends` 주간 트렌드 패키지 목록 페이지 (유료)
   - [ ] 이번 주 트렌드 요약 섹션
   - [ ] 카테고리 필터 (product, real_estate, stock, blog, shorts, reels)
