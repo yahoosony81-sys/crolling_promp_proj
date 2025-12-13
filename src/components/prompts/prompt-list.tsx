@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { PromptCard } from "./prompt-card";
-import { CategoryFilter, type CategoryFilterValue } from "./category-filter";
+import type { CategoryFilterValue } from "./category-filter";
 import {
   Empty,
   EmptyHeader,
@@ -15,12 +15,10 @@ type PromptTemplate = Database["public"]["Tables"]["prompt_templates"]["Row"];
 
 interface PromptListProps {
   prompts: PromptTemplate[];
+  selectedCategory: CategoryFilterValue;
 }
 
-export function PromptList({ prompts }: PromptListProps) {
-  const [selectedCategory, setSelectedCategory] =
-    useState<CategoryFilterValue>("all");
-
+export function PromptList({ prompts, selectedCategory }: PromptListProps) {
   const filteredPrompts = useMemo(() => {
     if (selectedCategory === "all") {
       return prompts;
@@ -30,10 +28,6 @@ export function PromptList({ prompts }: PromptListProps) {
 
   return (
     <div>
-      <CategoryFilter
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
-      />
       {filteredPrompts.length === 0 ? (
         <Empty>
           <EmptyHeader>

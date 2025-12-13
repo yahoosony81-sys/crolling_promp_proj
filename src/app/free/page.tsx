@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Header } from "@/components/header";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/../database.types";
-import { PromptList } from "@/components/prompts/prompt-list";
-import { UpgradeCTA } from "@/components/prompts/upgrade-cta";
+import { FreePromptsContent } from "./free-prompts-content";
 
 export const dynamic = "force-dynamic";
 
@@ -42,14 +41,9 @@ export default async function FreePromptsPage() {
           <h1 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
             무료 프롬프트 10선
           </h1>
-          <p className="text-lg text-muted-foreground">
-            지금 바로 사용할 수 있는 무료 프롬프트 템플릿을 확인해보세요
-          </p>
         </div>
-        <UpgradeCTA />
-        <PromptList prompts={prompts} />
+        <FreePromptsContent prompts={prompts} />
       </main>
     </div>
   );
 }
-

@@ -101,12 +101,28 @@
     - [x] 반응형 디자인 적용 (모바일, 태블릿, 데스크톱)
     - [x] 메타데이터 및 SEO 설정
     - [x] Toaster 컴포넌트를 layout.tsx에 추가 (토스트 알림 지원)
-- [ ] `/trends` 주간 트렌드 패키지 목록 페이지 (유료)
-  - [ ] 이번 주 트렌드 요약 섹션
-  - [ ] 카테고리 필터 (product, real_estate, stock, blog, shorts, reels)
-  - [ ] 패키지 카드 리스트 컴포넌트
-  - [ ] 구독 체크 및 접근 제어
-  - [ ] 페이지네이션
+- [x] `/trends` 주간 트렌드 패키지 목록 페이지 (유료)
+  - [x] 이번 주 트렌드 요약 섹션
+  - [x] 카테고리 필터 (product, real_estate, stock, blog, shorts, reels)
+  - [x] 패키지 카드 리스트 컴포넌트
+  - [x] 구독 체크 및 접근 제어
+  - [x] 페이지네이션
+  ---
+  - [ ] `/trends` 페이지 구현 세부 작업
+    - [x] `src/lib/utils/subscription.ts` 구독 체크 유틸리티 함수 생성
+    - [x] `src/lib/utils/trend.ts` 트렌드 관련 유틸리티 함수 생성 (week_key 생성)
+    - [x] `src/components/trends/subscription-gate.tsx` 구독 게이트 컴포넌트 생성
+    - [x] `src/components/trends/trend-pack-card.tsx` 트렌드 패키지 카드 컴포넌트 생성
+    - [x] `src/components/trends/week-summary-section.tsx` 이번 주 트렌드 요약 섹션 컴포넌트 생성
+    - [x] `src/components/trends/category-filter-trends.tsx` 트렌드 페이지용 카테고리 필터 컴포넌트 생성
+    - [x] `src/components/trends/trend-pack-list.tsx` 트렌드 패키지 리스트 컴포넌트 생성
+    - [x] `src/app/trends/page.tsx` 메인 페이지 컴포넌트 및 데이터 페칭 로직 구현
+    - [x] `src/app/trends/trends-content.tsx` 클라이언트 컴포넌트 생성 (카테고리 필터링, 페이지네이션 포함)
+    - [x] `src/components/ui/pagination.tsx` 페이지네이션 컴포넌트 수정 (onClick 지원)
+    - [x] 구독 체크 로직 구현 (서버 사이드)
+    - [x] 인증 체크 및 리다이렉트 구현
+    - [x] 반응형 디자인 적용 (모바일, 태블릿, 데스크톱)
+    - [x] 메타데이터 및 SEO 설정
 - [ ] `/packs/[id]` 패키지 상세 페이지
   - [ ] 트렌드 설명 섹션
   - [ ] 수집 데이터 요약 표시 (scraped_items)
@@ -147,11 +163,11 @@
 ## 컴포넌트
 - [ ] 공통 컴포넌트
   - [ ] `PromptCard` 프롬프트 카드 컴포넌트
-  - [ ] `TrendPackCard` 트렌드 패키지 카드 컴포넌트
+  - [x] `TrendPackCard` 트렌드 패키지 카드 컴포넌트
   - [ ] `ScrapedItemCard` 스크랩 아이템 카드 컴포넌트
   - [ ] `CopyButton` 복사 버튼 컴포넌트
   - [ ] `CategoryFilter` 카테고리 필터 컴포넌트
-  - [ ] `SubscriptionGate` 구독 체크 게이트 컴포넌트
+  - [x] `SubscriptionGate` 구독 체크 게이트 컴포넌트
   - [ ] `PricingTable` 가격 비교 테이블 컴포넌트
 - [ ] 레이아웃 컴포넌트
   - [ ] `Header` 헤더 컴포넌트 (네비게이션)
@@ -163,8 +179,8 @@
   - [ ] 로그인/회원가입 페이지
   - [ ] 사용자 프로필 관리
 - [ ] 구독 상태 관리
-  - [ ] 구독 체크 유틸리티 함수
-  - [ ] 구독 만료 체크 로직
+  - [x] 구독 체크 유틸리티 함수
+  - [x] 구독 만료 체크 로직
   - [ ] 구독 갱신 로직
 - [ ] 결제 연동
   - [ ] 결제 프로바이더 선택 및 설정 (Stripe/Toss Payments)
@@ -189,11 +205,11 @@
 - [ ] `lib/utils/prompt.ts` 프롬프트 관련 유틸
   - [ ] 프롬프트 변수 치환 함수
   - [ ] 프롬프트 포맷팅 함수
-- [ ] `lib/utils/subscription.ts` 구독 관련 유틸
-  - [ ] 구독 상태 체크 함수
-  - [ ] 구독 만료일 계산 함수
-- [ ] `lib/utils/trend.ts` 트렌드 관련 유틸
-  - [ ] 주차 키 생성 함수 (week_key)
+- [x] `lib/utils/subscription.ts` 구독 관련 유틸
+  - [x] 구독 상태 체크 함수
+  - [x] 구독 만료일 계산 함수
+- [x] `lib/utils/trend.ts` 트렌드 관련 유틸
+  - [x] 주차 키 생성 함수 (week_key)
   - [ ] 트렌드 키워드 추출 함수
 
 ## 타입 정의
