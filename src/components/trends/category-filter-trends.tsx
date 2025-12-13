@@ -26,13 +26,20 @@ export function CategoryFilterTrends({
   onCategoryChange,
 }: CategoryFilterTrendsProps) {
   return (
-    <div className="mb-8 flex flex-wrap gap-2">
+    <div
+      className="mb-8 overflow-x-auto pb-2"
+      role="group"
+      aria-label="트렌드 카테고리 필터"
+    >
+      <div className="flex min-w-max gap-2 sm:flex-wrap">
       {categories.map((category) => (
         <Button
           key={category.value}
           variant={selectedCategory === category.value ? "default" : "outline"}
           size="sm"
           onClick={() => onCategoryChange(category.value)}
+          aria-pressed={selectedCategory === category.value}
+          aria-label={`${category.label} 카테고리 ${selectedCategory === category.value ? "선택됨" : "선택"}`}
           className={cn(
             selectedCategory === category.value &&
               "bg-primary text-primary-foreground"
@@ -41,6 +48,7 @@ export function CategoryFilterTrends({
           {category.label}
         </Button>
       ))}
+      </div>
     </div>
   );
 }

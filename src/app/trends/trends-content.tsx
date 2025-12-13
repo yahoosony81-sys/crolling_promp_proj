@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { WeekSummarySection } from "@/components/trends/week-summary-section";
 import { CategoryFilterTrends, type CategoryFilterTrendsValue } from "@/components/trends/category-filter-trends";
 import { TrendPackList } from "@/components/trends/trend-pack-list";
@@ -25,9 +26,38 @@ interface TrendsContentProps {
 const PAGE_SIZE = 12;
 
 export function TrendsContent({ weekPacks, allPacks }: TrendsContentProps) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  
+  // URL에서 초기 상태 읽기
+  const categoryParam = searchParams.get("category") as CategoryFilterTrendsValue | null;
+  const pageParam = searchParams.get("page");
+  
   const [selectedCategory, setSelectedCategory] =
-    useState<CategoryFilterTrendsValue>("all");
-  const [currentPage, setCurrentPage] = useState(1);
+    useState<CategoryFilterTrendsValue>(categoryParam || "all");
+  const [currentPage, setCurrentPage] = useState(
+    pageParam ? parseInt(pageParam, 10) : 1
+  );
+
+  // URL 쿼리 파라미터 업데이트
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    
+    if (selectedCategory === "all") {
+      params.delete("category");
+    } else {
+      params.set("category", selectedCategory);
+    }
+    
+    if (currentPage === 1) {
+      params.delete("page");
+    } else {
+      params.set("page", currentPage.toString());
+    }
+    
+    const newUrl = params.toString() ? `?${params.toString()}` : "";
+    router.replace(`/trends${newUrl}`, { scroll: false });
+  }, [selectedCategory, currentPage, router, searchParams]);
 
   // 카테고리 필터링
   const filteredPacks = useMemo(() => {
@@ -37,20 +67,17 @@ export function TrendsContent({ weekPacks, allPacks }: TrendsContentProps) {
     return allPacks.filter((pack) => pack.category === selectedCategory);
   }, [allPacks, selectedCategory]);
 
-  // 페이지네이션 계산
-  const totalPages = Math.ceil(filteredPacks.length / PAGE_SIZE);
-  const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const endIndex = startIndex + PAGE_SIZE;
-  const paginatedPacks = filteredPacks.slice(startIndex, endIndex);
+  // 페이지네이션 계산 (메모이제이션)
+  const { totalPages, paginatedPacks } = useMemo(() => {
+    const total = Math.ceil(filteredPacks.length / PAGE_SIZE);
+    const startIndex = (currentPage - 1) * PAGE_SIZE;
+    const endIndex = startIndex + PAGE_SIZE;
+    const paginated = filteredPacks.slice(startIndex, endIndex);
+    return { totalPages: total, paginatedPacks: paginated };
+  }, [filteredPacks, currentPage]);
 
-  // 카테고리 변경 시 첫 페이지로 리셋
-  const handleCategoryChange = (category: CategoryFilterTrendsValue) => {
-    setSelectedCategory(category);
-    setCurrentPage(1);
-  };
-
-  // 페이지 번호 생성 (최대 5개 표시)
-  const getPageNumbers = () => {
+  // 페이지 번호 생성 (메모이제이션)
+  const pageNumbers = useMemo(() => {
     const pages: (number | "ellipsis")[] = [];
     const maxVisible = 5;
 
@@ -88,6 +115,12 @@ export function TrendsContent({ weekPacks, allPacks }: TrendsContentProps) {
     }
 
     return pages;
+  }, [totalPages, currentPage]);
+
+  // 카테고리 변경 시 첫 페이지로 리셋
+  const handleCategoryChange = (category: CategoryFilterTrendsValue) => {
+    setSelectedCategory(category);
+    setCurrentPage(1);
   };
 
   return (
@@ -100,25 +133,29 @@ export function TrendsContent({ weekPacks, allPacks }: TrendsContentProps) {
       <TrendPackList packs={paginatedPacks} selectedCategory={selectedCategory} />
       
       {totalPages > 1 && (
-        <div className="mt-8">
+        <nav className="mt-8" aria-label="페이지 네비게이션">
           <Pagination>
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
                   onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                   className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  aria-label="이전 페이지"
+                  aria-disabled={currentPage === 1}
                 />
               </PaginationItem>
               
-              {getPageNumbers().map((page, index) => (
+              {pageNumbers.map((page, index) => (
                 <PaginationItem key={index}>
                   {page === "ellipsis" ? (
-                    <PaginationEllipsis />
+                    <PaginationEllipsis aria-label="더 많은 페이지" />
                   ) : (
                     <PaginationLink
                       onClick={() => setCurrentPage(page)}
                       isActive={currentPage === page}
                       className="cursor-pointer"
+                      aria-label={`${page}페이지로 이동`}
+                      aria-current={currentPage === page ? "page" : undefined}
                     >
                       {page}
                     </PaginationLink>
@@ -130,11 +167,16 @@ export function TrendsContent({ weekPacks, allPacks }: TrendsContentProps) {
                 <PaginationNext
                   onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                   className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  aria-label="다음 페이지"
+                  aria-disabled={currentPage === totalPages}
                 />
               </PaginationItem>
             </PaginationContent>
           </Pagination>
-        </div>
+          <p className="sr-only">
+            현재 {currentPage}페이지, 총 {totalPages}페이지 중
+          </p>
+        </nav>
       )}
     </>
   );

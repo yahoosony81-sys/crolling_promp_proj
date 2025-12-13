@@ -123,6 +123,20 @@
     - [x] 인증 체크 및 리다이렉트 구현
     - [x] 반응형 디자인 적용 (모바일, 태블릿, 데스크톱)
     - [x] 메타데이터 및 SEO 설정
+    ---
+    - [ ] `/trends` 페이지 개선 작업 (plan 모드 build)
+      - [x] `src/components/trends/trend-pack-skeleton.tsx` 스켈레톤 로딩 컴포넌트 생성
+      - [x] `src/app/trends/page.tsx` Suspense 경계 추가 및 로딩 상태 처리
+      - [x] `src/components/trends/trends-error.tsx` 에러 메시지 컴포넌트 생성
+      - [x] `src/app/trends/error.tsx` 에러 바운더리 구현
+      - [x] `src/app/trends/trends-content.tsx` URL 쿼리 파라미터로 상태 유지 (카테고리, 페이지 번호)
+      - [x] `src/components/trends/week-summary-section.tsx` 빈 상태 개선 (다음 주 예정 트렌드 안내)
+      - [x] `src/app/trends/page.tsx` 데이터 페칭 캐싱 전략 적용 (revalidate: 3600)
+      - [x] `src/app/trends/trends-content.tsx` 메모이제이션 최적화 (페이지네이션 계산, 페이지 번호 생성)
+      - [x] 모든 트렌드 관련 컴포넌트 접근성 개선 (ARIA 레이블, 키보드 네비게이션)
+      - [x] `src/app/trends/page.tsx` SEO 메타데이터 개선 (Open Graph, Twitter Card)
+      - [x] `src/components/trends/trend-pack-card.tsx` 카드 호버 효과 개선 (transition-all, translate-y)
+      - [x] `src/components/trends/category-filter-trends.tsx` 모바일 반응형 개선 (스크롤 가능한 필터)
 - [ ] `/packs/[id]` 패키지 상세 페이지
   - [ ] 트렌드 설명 섹션
   - [ ] 수집 데이터 요약 표시 (scraped_items)
