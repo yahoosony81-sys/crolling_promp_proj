@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Saas Template',
-  description: 'by demodev',
+  title: 'TrendScrape Prompt',
+  description: '매주 업데이트되는 트렌드 프롬프트 서비스',
 };
 
 export const dynamic = 'force-dynamic';

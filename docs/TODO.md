@@ -63,12 +63,23 @@
     - [x] 각 트렌드 패키지에 적절한 프롬프트 연결
 
 ## 페이지 구현
-- [ ] `/` 랜딩 페이지
-  - [ ] 히어로 섹션 ("매주 업데이트되는 트렌드 프롬프트")
-  - [ ] 차별화 포인트 섹션
-  - [ ] 무료 체험 CTA 버튼
-  - [ ] 최신 트렌드 예시 표시 (1~2개)
-  - [ ] 무료 프롬프트 샘플 미리보기
+- [x] `/` 랜딩 페이지
+  - [x] 히어로 섹션 ("매주 업데이트되는 트렌드 프롬프트")
+  - [x] 차별화 포인트 섹션
+  - [x] 무료 체험 CTA 버튼
+  - [x] 최신 트렌드 예시 표시 (1~2개)
+  - [x] 무료 프롬프트 샘플 미리보기
+  ---
+  - [ ] 랜딩 페이지 구현 세부 작업
+    - [x] `src/app/page.tsx` 데이터 페칭 로직 구현 (Supabase 서버 클라이언트 사용)
+    - [x] `src/components/landing/hero-section.tsx` 히어로 섹션 컴포넌트 생성
+    - [x] `src/components/landing/differentiators-section.tsx` 차별화 포인트 섹션 컴포넌트 생성
+    - [x] `src/components/landing/latest-trends-section.tsx` 최신 트렌드 예시 섹션 컴포넌트 생성
+    - [x] `src/components/landing/free-prompts-section.tsx` 무료 프롬프트 샘플 섹션 컴포넌트 생성
+    - [x] `src/components/landing/cta-section.tsx` CTA 섹션 컴포넌트 생성
+    - [x] 모든 섹션 컴포넌트를 `page.tsx`에 통합
+    - [x] 반응형 디자인 적용 (모바일, 태블릿, 데스크톱)
+    - [x] 메타데이터 및 SEO 설정 (title, description)
 - [ ] `/free` 무료 프롬프트 10선 페이지
   - [ ] 프롬프트 리스트 컴포넌트
   - [ ] 카테고리 필터 기능
