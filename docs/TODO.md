@@ -137,13 +137,32 @@
       - [x] `src/app/trends/page.tsx` SEO 메타데이터 개선 (Open Graph, Twitter Card)
       - [x] `src/components/trends/trend-pack-card.tsx` 카드 호버 효과 개선 (transition-all, translate-y)
       - [x] `src/components/trends/category-filter-trends.tsx` 모바일 반응형 개선 (스크롤 가능한 필터)
-- [ ] `/packs/[id]` 패키지 상세 페이지
-  - [ ] 트렌드 설명 섹션
-  - [ ] 수집 데이터 요약 표시 (scraped_items)
-  - [ ] 목적 선택 UI (분석/콘텐츠 제작/판매/투자)
-  - [ ] 프롬프트 리스트 (pack_prompts 연결)
-  - [ ] 프롬프트 복사 기능
-  - [ ] 구독 체크 및 접근 제어
+- [x] `/packs/[id]` 패키지 상세 페이지
+  - [x] 트렌드 설명 섹션
+  - [x] 수집 데이터 요약 표시 (scraped_items)
+  - [x] 목적 선택 UI (분석/콘텐츠 제작/판매/투자)
+  - [x] 프롬프트 리스트 (pack_prompts 연결)
+  - [x] 프롬프트 복사 기능
+  - [x] 구독 체크 및 접근 제어
+  ---
+  - [ ] `/packs/[id]` 페이지 구현 세부 작업
+    - [x] `src/app/packs/[id]/page.tsx` 메인 페이지 컴포넌트 및 데이터 페칭 로직 구현
+    - [x] `src/app/packs/[id]/pack-detail-content.tsx` 클라이언트 컴포넌트 생성 (목적 선택 상태 관리, 필터링 포함)
+    - [x] `src/app/packs/[id]/loading.tsx` 로딩 상태 컴포넌트 생성
+    - [x] `src/app/packs/[id]/error.tsx` 에러 바운더리 구현
+    - [x] `src/components/packs/trend-description-section.tsx` 트렌드 설명 섹션 컴포넌트 생성
+    - [x] `src/components/packs/scraped-item-card.tsx` 스크랩 아이템 카드 컴포넌트 생성
+    - [x] `src/components/packs/scraped-items-section.tsx` 수집 데이터 섹션 컴포넌트 생성
+    - [x] `src/components/packs/purpose-selector.tsx` 목적 선택 UI 컴포넌트 생성 (분석/콘텐츠 제작/판매/투자 필터링)
+    - [x] `src/components/packs/pack-prompt-card.tsx` 패키지용 프롬프트 카드 컴포넌트 생성
+    - [x] `src/components/packs/pack-prompts-section.tsx` 프롬프트 리스트 섹션 컴포넌트 생성
+    - [x] `src/components/prompts/copy-button.tsx` pack_id 지원 추가 (사용 기록 추적)
+    - [x] 모든 컴포넌트를 pack-detail-content.tsx에 통합
+    - [x] 구독 체크 로직 구현 (서버 사이드)
+    - [x] 인증 체크 및 리다이렉트 구현
+    - [x] 반응형 디자인 적용 (모바일, 태블릿, 데스크톱)
+    - [x] 메타데이터 및 SEO 설정 (동적 title, description, Open Graph)
+    - [x] `src/app/globals.css` scrollbar-hide 유틸리티 클래스 추가
 - [ ] `/pricing` 구독 안내 페이지
   - [ ] 무료 vs 유료 기능 비교 테이블
   - [ ] 월 9,900원 플랜 강조
@@ -176,11 +195,11 @@
 
 ## 컴포넌트
 - [ ] 공통 컴포넌트
-  - [ ] `PromptCard` 프롬프트 카드 컴포넌트
+  - [x] `PromptCard` 프롬프트 카드 컴포넌트
   - [x] `TrendPackCard` 트렌드 패키지 카드 컴포넌트
-  - [ ] `ScrapedItemCard` 스크랩 아이템 카드 컴포넌트
-  - [ ] `CopyButton` 복사 버튼 컴포넌트
-  - [ ] `CategoryFilter` 카테고리 필터 컴포넌트
+  - [x] `ScrapedItemCard` 스크랩 아이템 카드 컴포넌트
+  - [x] `CopyButton` 복사 버튼 컴포넌트
+  - [x] `CategoryFilter` 카테고리 필터 컴포넌트
   - [x] `SubscriptionGate` 구독 체크 게이트 컴포넌트
   - [ ] `PricingTable` 가격 비교 테이블 컴포넌트
 - [ ] 레이아웃 컴포넌트

@@ -10,9 +10,10 @@ type PromptTemplate = Database["public"]["Tables"]["prompt_templates"]["Row"];
 
 interface CopyButtonProps {
   prompt: PromptTemplate;
+  packId?: string;
 }
 
-async function trackUsage(promptId: string, action: "copy" | "view") {
+async function trackUsage(promptId: string, action: "copy" | "view", packId?: string) {
   try {
     await fetch("/api/prompts/usage", {
       method: "POST",
@@ -21,6 +22,7 @@ async function trackUsage(promptId: string, action: "copy" | "view") {
       },
       body: JSON.stringify({
         prompt_id: promptId,
+        pack_id: packId,
         action,
       }),
     });
@@ -30,7 +32,7 @@ async function trackUsage(promptId: string, action: "copy" | "view") {
   }
 }
 
-export function CopyButton({ prompt }: CopyButtonProps) {
+export function CopyButton({ prompt, packId }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -40,7 +42,7 @@ export function CopyButton({ prompt }: CopyButtonProps) {
       toast.success("프롬프트가 복사되었습니다");
       
       // 사용 기록 추적 (비동기)
-      await trackUsage(prompt.id, "copy");
+      await trackUsage(prompt.id, "copy", packId);
 
       setTimeout(() => {
         setCopied(false);
