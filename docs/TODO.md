@@ -70,7 +70,7 @@
   - [x] 최신 트렌드 예시 표시 (1~2개)
   - [x] 무료 프롬프트 샘플 미리보기
   ---
-  - [ ] 랜딩 페이지 구현 세부 작업
+  - [x] 랜딩 페이지 구현 세부 작업
     - [x] `src/app/page.tsx` 데이터 페칭 로직 구현 (Supabase 서버 클라이언트 사용)
     - [x] `src/components/landing/hero-section.tsx` 히어로 섹션 컴포넌트 생성
     - [x] `src/components/landing/differentiators-section.tsx` 차별화 포인트 섹션 컴포넌트 생성
@@ -88,7 +88,7 @@
   - [x] 유료 전환 CTA 배치
   - [x] 사용 기록 추적 (prompt_usages)
   ---
-  - [ ] 무료 프롬프트 페이지 구현 세부 작업
+  - [x] 무료 프롬프트 페이지 구현 세부 작업
     - [x] `src/app/free/page.tsx` 메인 페이지 컴포넌트 및 데이터 페칭 로직 구현
     - [x] `src/components/prompts/prompt-card.tsx` 프롬프트 카드 컴포넌트 생성
     - [x] `src/components/prompts/category-filter.tsx` 카테고리 필터 컴포넌트 생성
@@ -108,7 +108,7 @@
   - [x] 구독 체크 및 접근 제어
   - [x] 페이지네이션
   ---
-  - [ ] `/trends` 페이지 구현 세부 작업
+  - [x] `/trends` 페이지 구현 세부 작업
     - [x] `src/lib/utils/subscription.ts` 구독 체크 유틸리티 함수 생성
     - [x] `src/lib/utils/trend.ts` 트렌드 관련 유틸리티 함수 생성 (week_key 생성)
     - [x] `src/components/trends/subscription-gate.tsx` 구독 게이트 컴포넌트 생성
@@ -124,7 +124,7 @@
     - [x] 반응형 디자인 적용 (모바일, 태블릿, 데스크톱)
     - [x] 메타데이터 및 SEO 설정
     ---
-    - [ ] `/trends` 페이지 개선 작업 (plan 모드 build)
+    - [x] `/trends` 페이지 개선 작업 (plan 모드 build)
       - [x] `src/components/trends/trend-pack-skeleton.tsx` 스켈레톤 로딩 컴포넌트 생성
       - [x] `src/app/trends/page.tsx` Suspense 경계 추가 및 로딩 상태 처리
       - [x] `src/components/trends/trends-error.tsx` 에러 메시지 컴포넌트 생성
@@ -145,7 +145,7 @@
   - [x] 프롬프트 복사 기능
   - [x] 구독 체크 및 접근 제어
   ---
-  - [ ] `/packs/[id]` 페이지 구현 세부 작업
+  - [x] `/packs/[id]` 페이지 구현 세부 작업
     - [x] `src/app/packs/[id]/page.tsx` 메인 페이지 컴포넌트 및 데이터 페칭 로직 구현
     - [x] `src/app/packs/[id]/pack-detail-content.tsx` 클라이언트 컴포넌트 생성 (목적 선택 상태 관리, 필터링 포함)
     - [x] `src/app/packs/[id]/loading.tsx` 로딩 상태 컴포넌트 생성
@@ -169,7 +169,7 @@
   - [ ] 구독 CTA 버튼
   - [ ] 결제 연동 (Stripe/Toss Payments 등)
   ---
-  - [ ] `/pricing` 페이지 구현 세부 작업
+  - [x] `/pricing` 페이지 구현 세부 작업
     - [x] `src/lib/constants/pricing.ts` 기능 비교 데이터 상수 정의
     - [x] `src/components/pricing/pricing-table.tsx` 무료 vs 유료 기능 비교 테이블 컴포넌트 생성
     - [x] `src/components/pricing/plan-highlight.tsx` 월 9,900원 플랜 강조 섹션 컴포넌트 생성
@@ -187,7 +187,7 @@
   - [ ] 구독 취소 기능
   - [ ] 결제 내역
   ---
-  - [ ] `/account` 페이지 구현 세부 작업
+  - [x] `/account` 페이지 구현 세부 작업
     - [x] `src/lib/utils/date.ts` 날짜 포맷팅 유틸리티 함수 생성 (date-fns 활용)
     - [x] `src/lib/utils/subscription.ts` 구독 관련 유틸리티 함수 확장 (상태 라벨, 취소 함수)
     - [x] `src/app/api/subscriptions/cancel/route.ts` 구독 취소 API 라우트 생성
@@ -219,7 +219,7 @@
   - [x] GET: 트렌드 패키지 상세 조회
   - [x] GET: 스크랩된 아이템 목록 조회
   ---
-  - [ ] `/api/trends` API 구현 세부 작업 (plan 모드 build)
+  - [x] `/api/trends` API 구현 세부 작업 (plan 모드 build)
     - [x] `src/app/api/trends/route.ts` GET 라우트 구현 (트렌드 패키지 목록 조회, 인증/구독 체크, 카테고리/주차 필터링, 페이지네이션 지원)
     - [x] `src/app/api/trends/[id]/route.ts` GET 라우트 구현 (트렌드 패키지 상세 조회, 인증/구독 체크, UUID 검증)
     - [x] `src/app/api/trends/[id]/scraped-items/route.ts` GET 라우트 구현 (스크랩된 아이템 목록 조회, 인증/구독 체크, 페이지네이션 지원)
@@ -234,9 +234,22 @@
 - [ ] `/api/webhooks` 웹훅 처리
   - [ ] 결제 웹훅 처리
   - [ ] 구독 갱신 웹훅 처리
+  ---
+  - [ ] `/api/webhooks` 웹훅 처리 구현 세부 작업 (plan 모드 build)
+    - [x] `src/app/api/webhooks/toss/route.ts` 웹훅 API 라우트 생성 (서명 검증, 이벤트 처리, 구독 상태 업데이트)
+    - [x] `src/lib/utils/webhook.ts` 웹훅 유틸리티 함수 생성 (Toss Payments 서명 검증 함수)
+    - [x] `src/lib/types/webhook.ts` 웹훅 이벤트 타입 정의 (Toss Payments 웹훅 페이로드 인터페이스)
+    - [x] `src/lib/utils/subscription.ts` 웹훅용 구독 생성/업데이트 함수 추가 (Clerk user ID 매핑 포함)
+    - [x] `docs/WEBHOOK_SETUP.md` 환경 변수 설정 가이드 문서화
+    - [ ] 웹훅 테스트 및 검증 (로컬 테스트 환경 설정, Toss Payments 테스트 웹훅 전송)
+    - [x] `src/app/api/webhooks/clerk/route.ts` Clerk 웹훅 API 라우트 생성 (서명 검증, 이벤트 처리, 사용자 동기화)
+    - [x] `src/lib/utils/webhook.ts` Clerk 웹훅 서명 검증 함수 추가
+    - [x] `src/lib/types/webhook.ts` Clerk 웹훅 이벤트 타입 정의 추가
+    - [x] `src/lib/utils/clerk-sync.ts` Clerk → Supabase 사용자 동기화 함수 구현
+    - [x] `docs/WEBHOOK_SETUP.md` Clerk 웹훅 설정 가이드 추가
 
 ## 컴포넌트
-- [ ] 공통 컴포넌트
+- [x] 공통 컴포넌트
   - [x] `PromptCard` 프롬프트 카드 컴포넌트
   - [x] `TrendPackCard` 트렌드 패키지 카드 컴포넌트
   - [x] `ScrapedItemCard` 스크랩 아이템 카드 컴포넌트
@@ -244,10 +257,18 @@
   - [x] `CategoryFilter` 카테고리 필터 컴포넌트
   - [x] `SubscriptionGate` 구독 체크 게이트 컴포넌트
   - [x] `PricingTable` 가격 비교 테이블 컴포넌트
-- [ ] 레이아웃 컴포넌트
-  - [ ] `Header` 헤더 컴포넌트 (네비게이션)
-  - [ ] `Footer` 푸터 컴포넌트
-  - [ ] `CTA` CTA 섹션 컴포넌트
+- [x] 레이아웃 컴포넌트
+  - [x] `Header` 헤더 컴포넌트 (네비게이션)
+  - [x] `Footer` 푸터 컴포넌트
+  - [x] `CTA` CTA 섹션 컴포넌트
+  ---
+  - [x] 레이아웃 컴포넌트 구현 세부 작업 (plan 모드 build)
+    - [x] `src/components/header.tsx` Header 컴포넌트 개선 (네비게이션 메뉴 추가, 모바일 햄버거 메뉴, 현재 페이지 활성화 표시, 로고 개선)
+    - [x] `src/components/profile.tsx` Profile 컴포넌트를 클라이언트 컴포넌트로 변경 (Clerk useUser 훅 사용)
+    - [x] `src/components/footer.tsx` Footer 컴포넌트 생성 (링크 섹션, 법적 정보, 연락처, 저작권 정보 포함)
+    - [x] `src/components/layout/cta-section.tsx` CTA 컴포넌트 재사용 가능하게 개선 및 이동 (props로 커스터마이징 가능)
+    - [x] `src/app/layout.tsx` Header와 Footer 통합 (모든 페이지에 자동 적용)
+    - [x] 각 페이지에서 개별 Header import 제거 (page.tsx, free/page.tsx, trends/page.tsx, packs/[id]/page.tsx, pricing/page.tsx, account/page.tsx)
 
 ## 인증 및 구독 기능
 - [ ] Clerk 인증 통합

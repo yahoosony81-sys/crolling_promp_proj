@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import { Header } from "@/components/header";
 import { getUserSubscription } from "@/lib/utils/subscription";
 import { SubscriptionStatus } from "@/components/account/subscription-status";
 import { PaymentInfo } from "@/components/account/payment-info";
@@ -32,42 +31,39 @@ export default async function AccountPage() {
   const subscription = await getUserSubscription(userId);
 
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main className="container py-8 md:py-12">
-        {/* 헤더 섹션 */}
+    <div className="container py-8 md:py-12">
+      {/* 헤더 섹션 */}
+      <div className="mb-8">
+        <h1 className="mb-2 text-3xl font-bold tracking-tight md:text-4xl">
+          내 계정
+        </h1>
+        <p className="text-lg text-muted-foreground">
+          구독 상태와 이용 기록을 확인하세요
+        </p>
+      </div>
+
+      {/* 구독 상태 및 결제 정보 섹션 */}
+      <div className="mb-8 grid gap-6 md:grid-cols-2">
+        <SubscriptionStatus subscription={subscription} />
+        <PaymentInfo subscription={subscription} />
+      </div>
+
+      {/* 구독 취소 섹션 */}
+      {subscription && (
         <div className="mb-8">
-          <h1 className="mb-2 text-3xl font-bold tracking-tight md:text-4xl">
-            내 계정
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            구독 상태와 이용 기록을 확인하세요
-          </p>
+          <CancelSubscription subscription={subscription} />
         </div>
+      )}
 
-        {/* 구독 상태 및 결제 정보 섹션 */}
-        <div className="mb-8 grid gap-6 md:grid-cols-2">
-          <SubscriptionStatus subscription={subscription} />
-          <PaymentInfo subscription={subscription} />
-        </div>
+      {/* 이용 기록 섹션 */}
+      <div className="mb-8">
+        <UsageHistory />
+      </div>
 
-        {/* 구독 취소 섹션 */}
-        {subscription && (
-          <div className="mb-8">
-            <CancelSubscription subscription={subscription} />
-          </div>
-        )}
-
-        {/* 이용 기록 섹션 */}
-        <div className="mb-8">
-          <UsageHistory />
-        </div>
-
-        {/* 결제 내역 섹션 */}
-        <div className="mb-8">
-          <PaymentHistory />
-        </div>
-      </main>
+      {/* 결제 내역 섹션 */}
+      <div className="mb-8">
+        <PaymentHistory />
+      </div>
     </div>
   );
 }

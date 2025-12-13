@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { auth } from "@clerk/nextjs/server";
-import { Header } from "@/components/header";
 import { createClient } from "@/lib/supabase/server";
 import { checkSubscription } from "@/lib/utils/subscription";
 import { SubscriptionGate } from "@/components/trends/subscription-gate";
@@ -159,21 +158,18 @@ export default async function PackDetailPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main className="container py-8 md:py-12">
-        {!hasSubscription ? (
-          <SubscriptionGate />
-        ) : (
-          <Suspense fallback={<PackDetailSkeleton />}>
-            <PackDetailContent
-              pack={pack}
-              scrapedItems={scrapedItems}
-              prompts={prompts}
-            />
-          </Suspense>
-        )}
-      </main>
+    <div className="container py-8 md:py-12">
+      {!hasSubscription ? (
+        <SubscriptionGate />
+      ) : (
+        <Suspense fallback={<PackDetailSkeleton />}>
+          <PackDetailContent
+            pack={pack}
+            scrapedItems={scrapedItems}
+            prompts={prompts}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

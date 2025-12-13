@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { auth } from "@clerk/nextjs/server";
-import { Header } from "@/components/header";
 import { createClient } from "@/lib/supabase/server";
 import { checkSubscription } from "@/lib/utils/subscription";
 import { getCurrentWeekKey } from "@/lib/utils/trend";
@@ -102,33 +101,30 @@ export default async function TrendsPage() {
   ]);
 
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main className="container py-8 md:py-12">
-        <div className="mb-8 text-center">
-          <h1 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
-            주간 트렌드 패키지
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            매주 업데이트되는 트렌드 패키지를 확인해보세요
-          </p>
-        </div>
-        
-        {!hasSubscription ? (
-          <SubscriptionGate />
-        ) : (
-          <Suspense
-            fallback={
-              <>
-                <WeekSummarySkeleton />
-                <TrendPackListSkeleton count={12} />
-              </>
-            }
-          >
-            <TrendsContent weekPacks={weekPacks} allPacks={allPacks} />
-          </Suspense>
-        )}
-      </main>
+    <div className="container py-8 md:py-12">
+      <div className="mb-8 text-center">
+        <h1 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
+          주간 트렌드 패키지
+        </h1>
+        <p className="text-lg text-muted-foreground">
+          매주 업데이트되는 트렌드 패키지를 확인해보세요
+        </p>
+      </div>
+      
+      {!hasSubscription ? (
+        <SubscriptionGate />
+      ) : (
+        <Suspense
+          fallback={
+            <>
+              <WeekSummarySkeleton />
+              <TrendPackListSkeleton count={12} />
+            </>
+          }
+        >
+          <TrendsContent weekPacks={weekPacks} allPacks={allPacks} />
+        </Suspense>
+      )}
     </div>
   );
 }

@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import { Header } from "@/components/header";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/../database.types";
 import { HeroSection } from "@/components/landing/hero-section";
 import { DifferentiatorsSection } from "@/components/landing/differentiators-section";
 import { LatestTrendsSection } from "@/components/landing/latest-trends-section";
 import { FreePromptsSection } from "@/components/landing/free-prompts-section";
-import { CTASection } from "@/components/landing/cta-section";
+import { CTASection } from "@/components/layout/cta-section";
 
 export const metadata: Metadata = {
   title: "TrendScrape Prompt - 매주 업데이트되는 트렌드 프롬프트",
@@ -58,15 +57,12 @@ export default async function Home() {
   ]);
 
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main>
-        <HeroSection />
-        <DifferentiatorsSection />
-        <LatestTrendsSection trendPacks={trendPacks} />
-        <FreePromptsSection prompts={freePrompts} />
-        <CTASection />
-      </main>
-    </div>
+    <>
+      <HeroSection />
+      <DifferentiatorsSection />
+      <LatestTrendsSection trendPacks={trendPacks} />
+      <FreePromptsSection prompts={freePrompts} />
+      <CTASection />
+    </>
   );
 }

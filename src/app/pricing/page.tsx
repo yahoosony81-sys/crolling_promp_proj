@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Header } from "@/components/header";
 import { PricingTable } from "@/components/pricing/pricing-table";
 import { PlanHighlight } from "@/components/pricing/plan-highlight";
 import { SubscribeCTA } from "@/components/pricing/subscribe-cta";
@@ -27,49 +26,46 @@ export const metadata: Metadata = {
 
 export default function PricingPage() {
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main className="container py-8 md:py-12">
-        {/* 헤더 섹션 */}
-        <div className="mb-12 text-center">
-          <h1 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
-            구독 안내
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            무료 플랜과 프리미엄 플랜의 차이를 확인하고
-            <br className="hidden sm:inline" />
-            지금 바로 구독하세요
-          </p>
-        </div>
+    <div className="container py-8 md:py-12">
+      {/* 헤더 섹션 */}
+      <div className="mb-12 text-center">
+        <h1 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
+          구독 안내
+        </h1>
+        <p className="text-lg text-muted-foreground">
+          무료 플랜과 프리미엄 플랜의 차이를 확인하고
+          <br className="hidden sm:inline" />
+          지금 바로 구독하세요
+        </p>
+      </div>
 
-        {/* 플랜 강조 섹션 */}
-        <div className="mb-12">
-          <PlanHighlight />
-        </div>
+      {/* 플랜 강조 섹션 */}
+      <div className="mb-12">
+        <PlanHighlight />
+      </div>
 
-        {/* 기능 비교 테이블 */}
-        <div className="mb-12">
-          <PricingTable />
-        </div>
+      {/* 기능 비교 테이블 */}
+      <div className="mb-12">
+        <PricingTable />
+      </div>
 
-        {/* 구독 CTA 섹션 */}
-        <div className="mb-8">
-          <SubscribeCTA />
-        </div>
+      {/* 구독 CTA 섹션 */}
+      <div className="mb-8">
+        <SubscribeCTA />
+      </div>
 
-        {/* 추가 안내 */}
-        <div className="mt-12 text-center">
-          <p className="text-sm text-muted-foreground">
-            궁금한 점이 있으신가요?{" "}
-            <a
-              href="mailto:support@trendscrape.com"
-              className="text-primary underline underline-offset-4 hover:no-underline"
-            >
-              문의하기
-            </a>
-          </p>
-        </div>
-      </main>
+      {/* 추가 안내 */}
+      <div className="mt-12 text-center">
+        <p className="text-sm text-muted-foreground">
+          궁금한 점이 있으신가요?{" "}
+          <a
+            href="mailto:support@trendscrape.com"
+            className="text-primary underline underline-offset-4 hover:no-underline"
+          >
+            문의하기
+          </a>
+        </p>
+      </div>
     </div>
   );
 }

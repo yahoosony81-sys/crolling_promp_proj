@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Header } from "@/components/header";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/../database.types";
 import { FreePromptsContent } from "./free-prompts-content";
@@ -34,16 +33,13 @@ export default async function FreePromptsPage() {
   const prompts = await getAllFreePrompts();
 
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main className="container py-8 md:py-12">
-        <div className="mb-8 text-center">
-          <h1 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
-            무료 프롬프트 10선
-          </h1>
-        </div>
-        <FreePromptsContent prompts={prompts} />
-      </main>
+    <div className="container py-8 md:py-12">
+      <div className="mb-8 text-center">
+        <h1 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
+          무료 프롬프트 10선
+        </h1>
+      </div>
+      <FreePromptsContent prompts={prompts} />
     </div>
   );
 }
