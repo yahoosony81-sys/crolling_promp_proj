@@ -186,6 +186,21 @@
   - [ ] 이용 기록 (prompt_usages)
   - [ ] 구독 취소 기능
   - [ ] 결제 내역
+  ---
+  - [ ] `/account` 페이지 구현 세부 작업
+    - [x] `src/lib/utils/date.ts` 날짜 포맷팅 유틸리티 함수 생성 (date-fns 활용)
+    - [x] `src/lib/utils/subscription.ts` 구독 관련 유틸리티 함수 확장 (상태 라벨, 취소 함수)
+    - [x] `src/app/api/subscriptions/cancel/route.ts` 구독 취소 API 라우트 생성
+    - [x] `src/app/api/account/usage/route.ts` 이용 기록 조회 API 라우트 생성 (페이지네이션)
+    - [x] `src/components/account/subscription-status.tsx` 구독 상태 표시 컴포넌트 생성
+    - [x] `src/components/account/payment-info.tsx` 결제 정보 표시 컴포넌트 생성
+    - [x] `src/components/account/usage-history.tsx` 이용 기록 리스트 컴포넌트 생성 (페이지네이션)
+    - [x] `src/components/account/cancel-subscription.tsx` 구독 취소 컴포넌트 생성 (AlertDialog)
+    - [x] `src/components/account/payment-history.tsx` 결제 내역 섹션 생성 (구조만)
+    - [x] `src/app/account/page.tsx` 메인 페이지 컴포넌트 생성 (인증 체크, 데이터 페칭, 컴포넌트 통합)
+    - [x] 모든 섹션 컴포넌트를 account/page.tsx에 통합
+    - [x] 반응형 디자인 적용 (모바일, 태블릿, 데스크톱)
+    - [x] SEO 메타데이터 설정 (title, description, robots)
 
 ## API 라우트
 - [ ] `/api/prompts` 프롬프트 관련 API
@@ -199,7 +214,7 @@
 - [ ] `/api/subscriptions` 구독 관련 API
   - [x] GET: 구독 상태 조회 (`/api/subscriptions/create` GET 메서드)
   - [x] POST: 구독 생성 (`/api/subscriptions/create` POST 메서드 - 구조만 준비, 결제 연동은 나중에 구현)
-  - [ ] PATCH: 구독 취소
+  - [x] PATCH: 구독 취소 (`/api/subscriptions/cancel` PATCH 메서드)
   - [ ] GET: 결제 내역 조회
 - [ ] `/api/webhooks` 웹훅 처리
   - [ ] 결제 웹훅 처리

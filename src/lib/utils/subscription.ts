@@ -77,3 +77,61 @@ export async function getUserSubscription(
   return data;
 }
 
+/**
+ * 구독 상태를 한글 라벨로 변환
+ * @param subscription - 구독 객체
+ * @returns 한글 상태 라벨
+ */
+export function getSubscriptionStatusLabel(
+  subscription: Subscription | null
+): string {
+  if (!subscription) {
+    return "구독 없음";
+  }
+
+  const isActive = isSubscriptionActive(subscription);
+
+  if (subscription.cancel_at_period_end) {
+    return "취소 예정";
+  }
+
+  if (isActive) {
+    return "활성";
+  }
+
+  if (subscription.status === "canceled") {
+    return "취소됨";
+  }
+
+  if (subscription.status === "past_due") {
+    return "결제 대기 중";
+  }
+
+  return "만료됨";
+}
+
+/**
+ * 구독 상태에 따른 배지 variant 반환
+ * @param subscription - 구독 객체
+ * @returns Badge variant
+ */
+export function getSubscriptionStatusVariant(
+  subscription: Subscription | null
+): "default" | "secondary" | "destructive" | "outline" {
+  if (!subscription) {
+    return "outline";
+  }
+
+  const isActive = isSubscriptionActive(subscription);
+
+  if (subscription.cancel_at_period_end) {
+    return "secondary";
+  }
+
+  if (isActive) {
+    return "default";
+  }
+
+  return "outline";
+}
+
