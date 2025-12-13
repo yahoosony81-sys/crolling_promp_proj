@@ -2,7 +2,7 @@
  * 스크랩 아이템 저장 유틸리티 함수
  */
 
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server-admin";
 import type { ScrapedItemData } from "@/lib/types/crawler";
 import { checkDuplicateUrl, validateScrapedData } from "./crawler";
 
@@ -16,7 +16,7 @@ export async function saveScrapedItems(
   packId: string,
   items: ScrapedItemData[]
 ): Promise<{ saved: number; skipped: number }> {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   // 기존 URL 조회 (중복 체크용)
   const { data: existingItems } = await supabase
@@ -90,7 +90,7 @@ export async function saveScrapedItems(
  * @returns 아이템 수
  */
 export async function getScrapedItemsCount(packId: string): Promise<number> {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { count, error } = await supabase
     .from("scraped_items")
@@ -110,7 +110,7 @@ export async function getScrapedItemsCount(packId: string): Promise<number> {
  * @returns 삭제된 수
  */
 export async function deleteScrapedItems(packId: string): Promise<number> {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("scraped_items")

@@ -12,8 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { checkSubscription } from "@/lib/utils/subscription";
-import { LuLoader2 } from "react-icons/lu";
+import { LuLoader } from "react-icons/lu";
 
 /**
  * 구독 CTA 컴포넌트
@@ -35,8 +34,13 @@ export function SubscribeCTA() {
 
       setIsChecking(true);
       try {
-        const subscribed = await checkSubscription(user.id);
-        setHasSubscription(subscribed);
+        const response = await fetch("/api/subscriptions/check");
+        if (response.ok) {
+          const data = await response.json();
+          setHasSubscription(data.hasSubscription || false);
+        } else {
+          setHasSubscription(false);
+        }
       } catch (error) {
         console.error("Error checking subscription:", error);
         setHasSubscription(false);
@@ -53,7 +57,7 @@ export function SubscribeCTA() {
     return (
       <Card className="border-2">
         <CardContent className="flex items-center justify-center py-8">
-          <LuLoader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          <LuLoader className="h-6 w-6 animate-spin text-muted-foreground" />
         </CardContent>
       </Card>
     );

@@ -2,7 +2,7 @@
  * 트렌드 패키지 생성 유틸리티 함수
  */
 
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server-admin";
 import { getCurrentWeekKey } from "./trend";
 import type { TrendKeyword } from "@/lib/types/crawler";
 
@@ -20,7 +20,7 @@ export async function createTrendPack(
   keywords: TrendKeyword[],
   summary: string
 ): Promise<string> {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   // 기존 패키지 확인 (같은 주차, 같은 카테고리)
   const { data: existingPack } = await supabase
@@ -132,7 +132,7 @@ export async function linkPromptsToPack(
   packId: string,
   category: string
 ): Promise<number> {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   // 카테고리에 맞는 프롬프트 조회 (유료 프롬프트만)
   const { data: prompts, error: promptsError } = await supabase

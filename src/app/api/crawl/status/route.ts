@@ -6,7 +6,7 @@
  */
 
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server-admin";
 import type { CrawlStatus } from "@/lib/types/crawler";
 
 export const dynamic = "force-dynamic";
@@ -17,7 +17,7 @@ export const dynamic = "force-dynamic";
  */
 export async function GET() {
   try {
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     // 최근 생성된 트렌드 패키지 조회 (크롤링 실행 시간 추정)
     const { data: recentPacks, error: packsError } = await supabase
