@@ -25,9 +25,7 @@ import {
   logCrawlWarn,
   logItemCrawl,
   logItemSave,
-  getCrawlStats,
   classifyError,
-  type CrawlStats,
 } from "@/lib/utils/crawl-logger";
 import { getCrawlerConfig } from "@/lib/config/crawler-config";
 import { applyCategorySummaryTemplate } from "@/lib/utils/data-processor";

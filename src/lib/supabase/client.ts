@@ -58,9 +58,3 @@ export function useSupabaseClient() {
   }, [session]);
 }
 
-/**
- * @deprecated useSupabaseClient를 사용하세요. 이 함수는 React Hook 규칙을 위반합니다.
- */
-export function createClient() {
-  return useSupabaseClient();
-}
