@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { LuXCircle } from "react-icons/lu";
+import { LuCircle } from "react-icons/lu";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +17,7 @@ export default function CheckoutCancelPage() {
         <Card>
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
-              <LuXCircle className="h-12 w-12 text-muted-foreground" />
+              <LuCircle className="h-12 w-12 text-muted-foreground" />
             </div>
             <CardTitle className="text-2xl">결제가 취소되었습니다</CardTitle>
             <CardDescription>

@@ -16,8 +16,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import type { Subscription } from "@/lib/types/subscription";
 import { formatDate } from "@/lib/utils/date";
-import { isSubscriptionActive } from "@/lib/utils/subscription";
-import { LuLoader2, LuXCircle } from "react-icons/lu";
+import { isSubscriptionActive } from "@/lib/utils/subscription-client";
+import { LuLoader, LuCircle } from "react-icons/lu";
 import { toast } from "sonner";
 
 interface CancelSubscriptionProps {
@@ -47,7 +47,7 @@ export function CancelSubscription({
     return (
       <div className="rounded-lg border border-orange-200 bg-orange-50 p-4 dark:border-orange-900 dark:bg-orange-950">
         <div className="flex items-start gap-3">
-          <LuXCircle className="h-5 w-5 text-orange-600 mt-0.5" />
+          <LuCircle className="h-5 w-5 text-orange-600 mt-0.5" />
           <div className="flex-1">
             <h4 className="font-medium text-orange-900 dark:text-orange-100">
               구독 취소 예정
@@ -124,7 +124,7 @@ export function CancelSubscription({
           >
             {isCanceling ? (
               <>
-                <LuLoader2 className="mr-2 h-4 w-4 animate-spin" />
+                <LuLoader className="mr-2 h-4 w-4 animate-spin" />
                 처리 중...
               </>
             ) : (

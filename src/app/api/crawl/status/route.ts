@@ -65,7 +65,7 @@ export async function GET() {
     }
 
     // 카테고리별 통계
-    const { data: categoryStats, error: categoryError } = await supabase
+    const { data: categoryStatsData, error: categoryError } = await supabase
       .from("trend_packs")
       .select("category")
       .eq("status", "published");
@@ -75,7 +75,7 @@ export async function GET() {
     }
 
     const categoryCounts: Record<string, number> = {};
-    categoryStats?.forEach((pack) => {
+    categoryStatsData?.forEach((pack) => {
       categoryCounts[pack.category] = (categoryCounts[pack.category] || 0) + 1;
     });
 
@@ -86,7 +86,7 @@ export async function GET() {
 
     // 크롤링 통계 조회
     const crawlStatsMap = getCrawlStats() as Map<string, CrawlStats>;
-    const categoryStats: Record<string, {
+    const crawlCategoryStats: Record<string, {
       lastRunAt: number | null;
       keywordsCollected: number;
       itemsCrawled: number;
@@ -100,7 +100,7 @@ export async function GET() {
     crawlStatsMap.forEach((stats, category) => {
       const total = stats.itemsCrawled + stats.errors;
       const successRate = total > 0 ? (stats.itemsCrawled / total) * 100 : 0;
-      categoryStats[category] = {
+      crawlCategoryStats[category] = {
         lastRunAt: stats.endTime || stats.startTime,
         keywordsCollected: stats.keywordsCollected,
         itemsCrawled: stats.itemsCrawled,
@@ -128,7 +128,7 @@ export async function GET() {
         totalPacks: totalPacks || 0,
         totalItems: totalItems || 0,
         categoryCounts,
-        categoryStats,
+        categoryStats: crawlCategoryStats,
         recentPacks: recentPacks?.slice(0, 5).map((pack) => ({
           id: pack.id,
           generatedAt: pack.generated_at || pack.created_at,

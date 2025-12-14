@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LuCheckCircle2, LuLoader2, LuXCircle } from "react-icons/lu";
+import { LuCircleCheck, LuLoader, LuCircle } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
@@ -75,7 +75,7 @@ export function CheckoutSuccessContent({
       <Card>
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <LuLoader2 className="h-12 w-12 animate-spin text-primary" />
+            <LuLoader className="h-12 w-12 animate-spin text-primary" />
           </div>
           <CardTitle className="text-2xl">결제 처리 중...</CardTitle>
           <CardDescription>
@@ -96,7 +96,7 @@ export function CheckoutSuccessContent({
       <Card>
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <LuXCircle className="h-12 w-12 text-destructive" />
+            <LuCircle className="h-12 w-12 text-destructive" />
           </div>
           <CardTitle className="text-2xl">결제 처리 실패</CardTitle>
           <CardDescription>
@@ -131,7 +131,7 @@ export function CheckoutSuccessContent({
     <Card>
       <CardHeader className="text-center">
         <div className="flex justify-center mb-4">
-          <LuCheckCircle2 className="h-12 w-12 text-green-500" />
+          <LuCircleCheck className="h-12 w-12 text-green-500" />
         </div>
         <CardTitle className="text-2xl">구독이 완료되었습니다!</CardTitle>
         <CardDescription>

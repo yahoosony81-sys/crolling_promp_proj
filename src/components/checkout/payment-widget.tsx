@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Script from "next/script";
 import { Button } from "@/components/ui/button";
-import { LuLoader2, LuCheckCircle2, LuXCircle } from "react-icons/lu";
+import { LuLoader, LuCircleCheck, LuCircle } from "react-icons/lu";
 import { toast } from "sonner";
 
 declare global {
@@ -122,7 +122,7 @@ export function PaymentWidget({
         {error && (
           <div className="border border-destructive rounded-lg p-4 bg-destructive/10">
             <div className="flex items-center gap-2 text-destructive">
-              <LuXCircle className="h-5 w-5" />
+              <LuCircle className="h-5 w-5" />
               <p className="text-sm">{error}</p>
             </div>
           </div>
@@ -144,7 +144,7 @@ export function PaymentWidget({
         >
           {isLoading ? (
             <>
-              <LuLoader2 className="mr-2 h-4 w-4 animate-spin" />
+              <LuLoader className="mr-2 h-4 w-4 animate-spin" />
               처리 중...
             </>
           ) : (

@@ -14,7 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { formatDateTime } from "@/lib/utils/date";
-import { LuLoader2, LuFileText } from "react-icons/lu";
+import { LuLoader, LuFileText } from "react-icons/lu";
 
 interface UsageItem {
   id: string;
@@ -102,7 +102,7 @@ export function UsageHistory() {
           <CardDescription>프롬프트 사용 내역을 확인하세요</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center py-8">
-          <LuLoader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          <LuLoader className="h-6 w-6 animate-spin text-muted-foreground" />
         </CardContent>
       </Card>
     );
