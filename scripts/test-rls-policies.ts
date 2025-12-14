@@ -68,14 +68,14 @@ function runTest(name: string, testFn: () => Promise<boolean> | boolean): void {
  * 비인증 클라이언트 생성
  */
 function createAnonymousClient() {
-  return createClient<Database>(supabaseUrl, supabaseAnonKey);
+  return createClient<Database>(supabaseUrl!, supabaseAnonKey!);
 }
 
 /**
  * 인증된 클라이언트 생성 (Clerk JWT 토큰 사용)
  */
 function createAuthenticatedClient(clerkToken: string) {
-  return createClient<Database>(supabaseUrl, supabaseAnonKey, {
+  return createClient<Database>(supabaseUrl!, supabaseAnonKey!, {
     global: {
       headers: {
         Authorization: `Bearer ${clerkToken}`,
