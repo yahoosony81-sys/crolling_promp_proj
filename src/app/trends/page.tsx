@@ -14,22 +14,41 @@ import type { TrendPack } from "@/lib/types/trend";
 export const revalidate = 3600;
 export const dynamic = "force-dynamic";
 
+const baseUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  process.env.NEXT_PUBLIC_APP_URL ||
+  "https://trendscrape-prompt.com";
+
 export const metadata: Metadata = {
   title: "주간 트렌드 패키지 - TrendScrape Prompt",
   description:
     "매주 업데이트되는 트렌드 패키지를 확인하세요. 상품, 부동산, 주식, 블로그, 숏츠, 릴스 등 다양한 카테고리의 트렌드를 제공합니다.",
+  alternates: {
+    canonical: `${baseUrl}/trends`,
+  },
   openGraph: {
     title: "주간 트렌드 패키지 - TrendScrape Prompt",
     description:
       "매주 업데이트되는 트렌드 패키지를 확인하세요. 상품, 부동산, 주식, 블로그, 숏츠, 릴스 등 다양한 카테고리의 트렌드를 제공합니다.",
+    url: `${baseUrl}/trends`,
     type: "website",
     siteName: "TrendScrape Prompt",
+    images: [
+      {
+        url: `${baseUrl}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "주간 트렌드 패키지 - TrendScrape Prompt",
+      },
+    ],
+    locale: "ko_KR",
   },
   twitter: {
     card: "summary_large_image",
     title: "주간 트렌드 패키지 - TrendScrape Prompt",
     description:
       "매주 업데이트되는 트렌드 패키지를 확인하세요. 상품, 부동산, 주식, 블로그, 숏츠, 릴스 등 다양한 카테고리의 트렌드를 제공합니다.",
+    images: [`${baseUrl}/og-image.png`],
   },
 };
 

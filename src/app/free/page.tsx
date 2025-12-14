@@ -5,10 +5,42 @@ import { FreePromptsContent } from "./free-prompts-content";
 
 export const dynamic = "force-dynamic";
 
+const baseUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  process.env.NEXT_PUBLIC_APP_URL ||
+  "https://trendscrape-prompt.com";
+
 export const metadata: Metadata = {
   title: "무료 프롬프트 10선 - TrendScrape Prompt",
   description:
     "지금 바로 사용할 수 있는 무료 프롬프트 템플릿을 확인해보세요. 블로그, 숏츠, 릴스, 상품 분석 등 다양한 카테고리의 프롬프트를 제공합니다.",
+  alternates: {
+    canonical: `${baseUrl}/free`,
+  },
+  openGraph: {
+    title: "무료 프롬프트 10선 - TrendScrape Prompt",
+    description:
+      "지금 바로 사용할 수 있는 무료 프롬프트 템플릿을 확인해보세요. 블로그, 숏츠, 릴스, 상품 분석 등 다양한 카테고리의 프롬프트를 제공합니다.",
+    url: `${baseUrl}/free`,
+    siteName: "TrendScrape Prompt",
+    images: [
+      {
+        url: `${baseUrl}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "무료 프롬프트 10선 - TrendScrape Prompt",
+      },
+    ],
+    locale: "ko_KR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "무료 프롬프트 10선 - TrendScrape Prompt",
+    description:
+      "지금 바로 사용할 수 있는 무료 프롬프트 템플릿을 확인해보세요.",
+    images: [`${baseUrl}/og-image.png`],
+  },
 };
 
 type PromptTemplate = Database["public"]["Tables"]["prompt_templates"]["Row"];

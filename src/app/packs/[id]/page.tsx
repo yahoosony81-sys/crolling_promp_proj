@@ -109,25 +109,57 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const pack = await getPackById(id);
 
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.NEXT_PUBLIC_APP_URL ||
+    "https://trendscrape-prompt.com";
+
   if (!pack) {
     return {
       title: "패키지를 찾을 수 없습니다 - TrendScrape Prompt",
     };
   }
 
+  // 카테고리별 한글 라벨
+  const categoryLabels: Record<string, string> = {
+    product: "상품",
+    real_estate: "부동산",
+    stock: "주식",
+    blog: "블로그",
+    shorts: "숏츠",
+    reels: "릴스",
+  };
+
+  const categoryLabel = categoryLabels[pack.category] || pack.category;
+  const enhancedDescription = `${pack.summary} ${categoryLabel} 카테고리의 트렌드 데이터와 맞춤 프롬프트를 확인하세요.`;
+
   return {
     title: `${pack.title} - TrendScrape Prompt`,
-    description: pack.summary,
+    description: enhancedDescription,
+    alternates: {
+      canonical: `${baseUrl}/packs/${id}`,
+    },
     openGraph: {
       title: `${pack.title} - TrendScrape Prompt`,
-      description: pack.summary,
+      description: enhancedDescription,
+      url: `${baseUrl}/packs/${id}`,
       type: "website",
       siteName: "TrendScrape Prompt",
+      images: [
+        {
+          url: `${baseUrl}/og-image.png`,
+          width: 1200,
+          height: 630,
+          alt: `${pack.title} - TrendScrape Prompt`,
+        },
+      ],
+      locale: "ko_KR",
     },
     twitter: {
       card: "summary_large_image",
       title: `${pack.title} - TrendScrape Prompt`,
-      description: pack.summary,
+      description: enhancedDescription,
+      images: [`${baseUrl}/og-image.png`],
     },
   };
 }

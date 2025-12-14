@@ -5,22 +5,41 @@ import { SubscribeCTA } from "@/components/pricing/subscribe-cta";
 
 export const dynamic = "force-dynamic";
 
+const baseUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  process.env.NEXT_PUBLIC_APP_URL ||
+  "https://trendscrape-prompt.com";
+
 export const metadata: Metadata = {
   title: "구독 안내 - TrendScrape Prompt",
   description:
     "월 9,900원으로 매주 업데이트되는 트렌드 프롬프트와 크롤링 데이터를 이용하세요. 무료 플랜과 프리미엄 플랜의 차이를 확인하고 지금 바로 구독하세요.",
+  alternates: {
+    canonical: `${baseUrl}/pricing`,
+  },
   openGraph: {
     title: "구독 안내 - TrendScrape Prompt",
     description:
       "월 9,900원으로 매주 업데이트되는 트렌드 프롬프트와 크롤링 데이터를 이용하세요.",
+    url: `${baseUrl}/pricing`,
     type: "website",
     siteName: "TrendScrape Prompt",
+    images: [
+      {
+        url: `${baseUrl}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "구독 안내 - TrendScrape Prompt",
+      },
+    ],
+    locale: "ko_KR",
   },
   twitter: {
     card: "summary_large_image",
     title: "구독 안내 - TrendScrape Prompt",
     description:
       "월 9,900원으로 매주 업데이트되는 트렌드 프롬프트와 크롤링 데이터를 이용하세요.",
+    images: [`${baseUrl}/og-image.png`],
   },
 };
 

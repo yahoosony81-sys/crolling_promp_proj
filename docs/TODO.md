@@ -496,12 +496,26 @@
     - [x] `docs/ANIMATIONS.md` 애니메이션 가이드 문서 작성
 
 ## SEO 및 메타데이터
-- [ ] `app/robots.ts` robots.txt 설정
-- [ ] `app/sitemap.ts` 사이트맵 생성
-- [ ] `app/manifest.ts` 웹 앱 매니페스트
-- [ ] 각 페이지별 메타데이터 설정
-  - [ ] Open Graph 이미지
-  - [ ] Twitter Card 설정
+- [x] `app/robots.ts` robots.txt 설정
+- [x] `app/sitemap.ts` 사이트맵 생성
+- [x] `app/manifest.ts` 웹 앱 매니페스트
+- [x] 각 페이지별 메타데이터 설정
+  - [x] Open Graph 이미지 설정 (코드 완료, 이미지 파일 추가 필요)
+  - [x] Twitter Card 설정
+  ---
+  - [x] SEO 및 메타데이터 구현 세부 작업 (plan 모드 build)
+    - [x] `src/app/robots.ts` robots.txt 파일 생성 (검색 엔진 크롤링 규칙 설정, Google/Naver Bot 특별 설정)
+    - [x] `src/app/sitemap.ts` 사이트맵 파일 생성 (정적 페이지 + 동적 페이지(published trend_packs) 포함)
+    - [x] `src/app/manifest.ts` 웹 앱 매니페스트 파일 생성 (PWA 설정, 테마 색상 연동)
+    - [x] `src/app/layout.tsx` 루트 레이아웃 메타데이터 개선 (Open Graph 기본값, Twitter Card 기본값, keywords, verification 설정)
+    - [x] `src/app/page.tsx` 랜딩 페이지 메타데이터 개선 (Open Graph, Twitter Card, canonical URL 추가)
+    - [x] `src/app/free/page.tsx` 무료 프롬프트 페이지 메타데이터 개선 (Open Graph, Twitter Card, canonical URL 추가)
+    - [x] `src/app/trends/page.tsx` 트렌드 목록 페이지 메타데이터 개선 (OG 이미지 URL, canonical URL 추가)
+    - [x] `src/app/packs/[id]/page.tsx` 패키지 상세 페이지 메타데이터 개선 (동적 OG 이미지, enhanced description, canonical URL 추가)
+    - [x] `src/app/pricing/page.tsx` 가격 페이지 메타데이터 개선 (OG 이미지 URL, canonical URL 추가)
+    - [ ] `public/og-image.png` Open Graph 이미지 파일 추가 (1200x630px 권장, 사용자가 직접 생성 필요)
+    - [ ] `public/logo.png` 로고 파일 추가 (사용자가 직접 생성 필요)
+    - [ ] `public/icons/` 디렉토리 생성 및 다양한 크기 아이콘 추가 (manifest.ts에서 사용, 사용자가 직접 생성 필요)
 
 ## 테스트
 - [ ] 단위 테스트

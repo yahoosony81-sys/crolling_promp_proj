@@ -18,9 +18,83 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+const baseUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  process.env.NEXT_PUBLIC_APP_URL ||
+  "https://trendscrape-prompt.com";
+
 export const metadata: Metadata = {
-  title: 'TrendScrape Prompt',
-  description: '매주 업데이트되는 트렌드 프롬프트 서비스',
+  metadataBase: new URL(baseUrl),
+  title: {
+    default: "TrendScrape Prompt - 매주 업데이트되는 트렌드 프롬프트",
+    template: "%s | TrendScrape Prompt",
+  },
+  description:
+    "매주 트렌드를 반영해 새롭게 업데이트되는 실행형 프롬프트를 제공합니다. 자동 크롤링·스크래핑 데이터와 목적별 맞춤 프롬프트로 빠르게 성과를 만들어보세요.",
+  keywords: [
+    "프롬프트",
+    "트렌드",
+    "크롤링",
+    "스크래핑",
+    "AI",
+    "콘텐츠 제작",
+    "블로그",
+    "유튜브 숏츠",
+    "인스타 릴스",
+    "상품 분석",
+    "주식 분석",
+    "부동산 분석",
+  ],
+  authors: [{ name: "TrendScrape Prompt" }],
+  creator: "TrendScrape Prompt",
+  publisher: "TrendScrape Prompt",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    url: baseUrl,
+    siteName: "TrendScrape Prompt",
+    title: "TrendScrape Prompt - 매주 업데이트되는 트렌드 프롬프트",
+    description:
+      "매주 트렌드를 반영해 새롭게 업데이트되는 실행형 프롬프트를 제공합니다. 자동 크롤링·스크래핑 데이터와 목적별 맞춤 프롬프트로 빠르게 성과를 만들어보세요.",
+    images: [
+      {
+        url: `${baseUrl}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "TrendScrape Prompt",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TrendScrape Prompt - 매주 업데이트되는 트렌드 프롬프트",
+    description:
+      "매주 트렌드를 반영해 새롭게 업데이트되는 실행형 프롬프트를 제공합니다.",
+    images: [`${baseUrl}/og-image.png`],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    // TODO: Google Search Console, Naver Webmaster 등 검증 코드 추가
+    // google: "your-google-verification-code",
+    // other: {
+    //   "naver-site-verification": "your-naver-verification-code",
+    // },
+  },
 };
 
 export const dynamic = 'force-dynamic';
