@@ -8,7 +8,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server-admin";
 import type { CrawlStatus } from "@/lib/types/crawler";
-import { getCrawlStats, getCrawlLogs } from "@/lib/utils/crawl-logger";
+import { getCrawlStats, getCrawlLogs, type CrawlStats } from "@/lib/utils/crawl-logger";
 
 export const dynamic = "force-dynamic";
 
