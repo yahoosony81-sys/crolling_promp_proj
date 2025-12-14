@@ -435,9 +435,18 @@
     - [x] `src/app/api/subscriptions/payment-history/route.ts`에서 새로운 타입 사용하도록 업데이트
 
 ## 스타일링 및 UI/UX
-- [ ] 테마 설정
-  - [ ] 다크 모드 지원
-  - [ ] 색상 팔레트 정의
+- [x] 테마 설정
+  - [x] 다크 모드 지원
+  - [x] 색상 팔레트 정의
+  ---
+  - [x] 테마 설정 구현 세부 작업 (plan 모드 build)
+    - [x] `src/lib/constants/colors.ts` 색상 팔레트 상수 정의 (라이트/다크 모드별 색상 값, oklch 색상 공간 사용)
+    - [x] `src/lib/types/theme.ts` 테마 관련 타입 정의 (ThemeMode, ColorPalette, ThemeConfig, ColorKey)
+    - [x] `src/lib/utils/theme.ts` 테마 유틸리티 함수 구현 (getThemeColor, isDarkMode, getThemeConfig, getResolvedTheme, getCSSVariableName)
+    - [x] `src/app/globals.css` 색상 변수 업데이트 (primary 색상 개선: oklch(0.35 0.03 250), 색상 대비율 검증)
+    - [x] `src/components/theme-switcher.tsx` 개선 (한국어 레이블 추가, 접근성 개선: ARIA 레이블, 키보드 네비게이션, role="menuitemradio")
+    - [x] 주요 페이지에서 다크 모드 렌더링 검증 (모든 페이지와 컴포넌트에서 다크 모드 작동 확인, Tailwind 시맨틱 색상 클래스 사용 확인)
+    - [x] `docs/THEME.md` 테마 시스템 사용 가이드 문서 작성 (테마 시스템 개요, 색상 팔레트 설명, 사용 방법, 커스텀 색상 추가 방법)
 - [ ] 반응형 디자인
   - [ ] 모바일 최적화
   - [ ] 태블릿 레이아웃

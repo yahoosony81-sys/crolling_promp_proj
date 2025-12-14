@@ -11,6 +11,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+/**
+ * 테마 전환 컴포넌트
+ * 
+ * 라이트 모드, 다크 모드, 시스템 설정을 선택할 수 있는 드롭다운 메뉴를 제공합니다.
+ * 접근성을 고려하여 ARIA 레이블과 키보드 네비게이션을 지원합니다.
+ */
 export function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -19,37 +25,87 @@ export function ThemeSwitcher() {
     setMounted(true);
   }, []);
 
+  // SSR 하이드레이션 이슈 방지를 위한 플레이스홀더
   if (!mounted) {
     return (
-      <Button variant="ghost" size="icon">
+      <Button 
+        variant="ghost" 
+        size="icon"
+        aria-label="테마 전환"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
         <LuSun className="size-4" />
-        <span className="sr-only">Toggle theme</span>
+        <span className="sr-only">테마 전환</span>
       </Button>
     );
   }
 
+  const getThemeIcon = () => {
+    switch (theme) {
+      case "light":
+        return <LuSun className="size-4" aria-hidden="true" />;
+      case "dark":
+        return <LuMoon className="size-4" aria-hidden="true" />;
+      case "system":
+      default:
+        return <LuMonitor className="size-4" aria-hidden="true" />;
+    }
+  };
+
+  const getThemeLabel = () => {
+    switch (theme) {
+      case "light":
+        return "라이트 모드";
+      case "dark":
+        return "다크 모드";
+      case "system":
+      default:
+        return "시스템 설정";
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
-          {theme === "light" && <LuSun className="size-4" />}
-          {theme === "dark" && <LuMoon className="size-4" />}
-          {theme === "system" && <LuMonitor className="size-4" />}
-          <span className="sr-only">Toggle theme</span>
+        <Button 
+          variant="ghost" 
+          size="icon"
+          aria-label={`테마 전환 (현재: ${getThemeLabel()})`}
+          aria-haspopup="true"
+          title={`테마 전환: ${getThemeLabel()}`}
+        >
+          {getThemeIcon()}
+          <span className="sr-only">테마 전환</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
-          <LuSun className="mr-2 size-4" />
-          Light
+      <DropdownMenuContent align="end" aria-label="테마 선택">
+        <DropdownMenuItem 
+          onClick={() => setTheme("light")}
+          aria-label="라이트 모드로 전환"
+          role="menuitemradio"
+          aria-checked={theme === "light"}
+        >
+          <LuSun className="mr-2 size-4" aria-hidden="true" />
+          <span>라이트</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
-          <LuMoon className="mr-2 size-4" />
-          Dark
+        <DropdownMenuItem 
+          onClick={() => setTheme("dark")}
+          aria-label="다크 모드로 전환"
+          role="menuitemradio"
+          aria-checked={theme === "dark"}
+        >
+          <LuMoon className="mr-2 size-4" aria-hidden="true" />
+          <span>다크</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          <LuMonitor className="mr-2 size-4" />
-          System
+        <DropdownMenuItem 
+          onClick={() => setTheme("system")}
+          aria-label="시스템 설정 따르기"
+          role="menuitemradio"
+          aria-checked={theme === "system"}
+        >
+          <LuMonitor className="mr-2 size-4" aria-hidden="true" />
+          <span>시스템</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
