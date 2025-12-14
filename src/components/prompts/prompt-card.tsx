@@ -69,3 +69,4 @@ export function PromptCard({ prompt }: PromptCardProps) {
   );
 }
 
+

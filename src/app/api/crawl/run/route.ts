@@ -10,7 +10,7 @@
  */
 
 import { NextResponse } from "next/server";
-import { fetchNaverNews } from "@/lib/utils/crawler";
+import { crawlByCategory } from "@/lib/utils/crawler";
 import { collectTrendKeywords, generateTrendPackSummary } from "@/lib/utils/trend-keywords";
 import {
   createCurrentWeekTrendPack,
@@ -18,6 +18,20 @@ import {
 } from "@/lib/utils/trend-pack";
 import { saveScrapedItems } from "@/lib/utils/scraped-items";
 import { summarizeHybrid } from "@/lib/utils/ai-summary";
+import {
+  logCrawlStart,
+  logCrawlSuccess,
+  logCrawlError,
+  logCrawlWarn,
+  logItemCrawl,
+  logItemSave,
+  getCrawlStats,
+  classifyError,
+  type CrawlStats,
+} from "@/lib/utils/crawl-logger";
+import { getCrawlerConfig } from "@/lib/config/crawler-config";
+import { applyCategorySummaryTemplate } from "@/lib/utils/data-processor";
+import type { ScrapedItemData } from "@/lib/types/crawler";
 
 export const dynamic = "force-dynamic";
 
@@ -82,12 +96,14 @@ export async function POST(request: Request) {
 
     // 카테고리별 크롤링 실행
     for (const category of categories) {
+      logCrawlStart(category, { limit });
+      
       try {
         // 1. 트렌드 키워드 수집
         const keywords = await collectTrendKeywords(category);
-        console.log(`[${category}] Collected ${keywords.length} keywords`);
 
         if (keywords.length === 0) {
+          logCrawlWarn(category, "키워드 수집 실패: 키워드가 없습니다");
           results[category] = {
             packId: null,
             keywords: 0,
@@ -100,29 +116,33 @@ export async function POST(request: Request) {
           continue;
         }
 
-        // 2. 각 키워드로 크롤링
-        const allItems: Array<{
-          keyword: string;
-          items: Awaited<ReturnType<typeof fetchNaverNews>>;
-        }> = [];
+        // 2. 각 키워드로 크롤링 (카테고리별 크롤러 사용)
+        const config = getCrawlerConfig();
+        const maxKeywords = config.limits.maxKeywordsPerCategory;
+        const allItems: ScrapedItemData[] = [];
 
-        for (const keyword of keywords.slice(0, 3)) {
-          // 상위 3개 키워드만 사용
+        for (const keyword of keywords.slice(0, maxKeywords)) {
           try {
-            const items = await fetchNaverNews(keyword.keyword, "", limit);
-            allItems.push({ keyword: keyword.keyword, items });
+            const items = await crawlByCategory(category, keyword.keyword, limit);
+            allItems.push(...items);
+            logItemCrawl(category, keyword.keyword, "multiple", items.length, true);
             
-            // Rate limiting (요청 간 딜레이)
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            // Rate limiting (키워드 간 딜레이)
+            await new Promise((resolve) => setTimeout(resolve, config.rateLimit.delayBetweenKeywords));
           } catch (error) {
-            console.error(`[${category}] Error crawling keyword ${keyword.keyword}:`, error);
+            const errorInfo = classifyError(error);
+            logItemCrawl(category, keyword.keyword, "multiple", 0, false);
+            logCrawlError(category, `키워드 크롤링 실패: ${keyword.keyword}`, error instanceof Error ? error : new Error(String(error)), {
+              errorType: errorInfo.type,
+              retryable: errorInfo.retryable,
+            });
           }
         }
 
         // 3. 아이템 통합 및 요약 개선
-        const scrapedItems = allItems.flatMap((item) => item.items);
+        const scrapedItems = allItems;
         
-        // 요약 개선 (필요시 AI 요약 사용)
+        // 요약 개선 (필요시 AI 요약 사용 및 카테고리별 템플릿 적용)
         for (const item of scrapedItems) {
           if (item.summary.length < 100) {
             // 요약이 너무 짧으면 개선 시도
@@ -130,26 +150,28 @@ export async function POST(request: Request) {
               const improvedSummary = await summarizeHybrid(item.summary, 200);
               item.summary = improvedSummary;
             } catch (error) {
-              console.warn(`[${category}] Failed to improve summary:`, error);
+              logCrawlWarn(category, `요약 개선 실패: ${item.url}`, { error: error instanceof Error ? error.message : String(error) });
             }
           }
+          
+          // 카테고리별 요약 템플릿 적용
+          item.summary = applyCategorySummaryTemplate(item, category);
         }
 
         // 4. 트렌드 패키지 생성
         const summary = generateTrendPackSummary(keywords, scrapedItems.length);
         const packId = await createCurrentWeekTrendPack(category, keywords, summary);
-        console.log(`[${category}] Created trend pack: ${packId}`);
+        logCrawlSuccess(category, `트렌드 패키지 생성 완료: ${packId}`);
 
         // 5. 스크랩 아이템 저장
         const saveResult = await saveScrapedItems(packId, scrapedItems);
-        console.log(
-          `[${category}] Saved ${saveResult.saved} items, skipped ${saveResult.skipped}`
-        );
+        logItemSave(category, saveResult.saved, saveResult.skipped);
 
         // 6. 프롬프트 연결
         const promptsLinked = await linkPromptsToPack(packId, category);
-        console.log(`[${category}] Linked ${promptsLinked} prompts`);
+        logCrawlSuccess(category, `프롬프트 연결 완료: ${promptsLinked}개`);
 
+        const stats = getCrawlStats(category) as CrawlStats;
         results[category] = {
           packId,
           keywords: keywords.length,
@@ -159,7 +181,16 @@ export async function POST(request: Request) {
           promptsLinked,
         };
       } catch (error) {
-        console.error(`[${category}] Error processing category:`, error);
+        const errorInfo = classifyError(error);
+        logCrawlError(
+          category,
+          `카테고리 처리 실패: ${errorInfo.message}`,
+          error instanceof Error ? error : new Error(String(error)),
+          {
+            errorType: errorInfo.type,
+            retryable: errorInfo.retryable,
+          }
+        );
         results[category] = {
           packId: null,
           keywords: 0,
@@ -167,7 +198,7 @@ export async function POST(request: Request) {
           itemsSaved: 0,
           itemsSkipped: 0,
           promptsLinked: 0,
-          error: error instanceof Error ? error.message : "Unknown error",
+          error: `${errorInfo.type}: ${errorInfo.message}`,
         };
       }
     }

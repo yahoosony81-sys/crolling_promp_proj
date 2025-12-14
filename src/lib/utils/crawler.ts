@@ -4,6 +4,77 @@
 
 import * as cheerio from "cheerio";
 import type { ScrapedItemData, CrawlConfig } from "@/lib/types/crawler";
+import { getCrawlerConfig, getSourcesForCategory, type ValidCategory } from "@/lib/config/crawler-config";
+
+/**
+ * 재시도 로직 (Exponential Backoff)
+ * @param fn - 실행할 함수
+ * @param maxRetries - 최대 재시도 횟수
+ * @param delay - 초기 딜레이 (ms)
+ * @returns 함수 실행 결과
+ */
+export async function retryWithBackoff<T>(
+  fn: () => Promise<T>,
+  maxRetries: number = 3,
+  delay: number = 1000
+): Promise<T> {
+  let lastError: Error | unknown;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+
+      // 재시도 불가능한 에러면 즉시 throw
+      if (!canRetryError(error)) {
+        throw error;
+      }
+
+      // 마지막 시도면 에러 throw
+      if (attempt === maxRetries) {
+        throw error;
+      }
+
+      // Exponential backoff: delay * 2^attempt
+      const backoffDelay = delay * Math.pow(2, attempt);
+      await new Promise((resolve) => setTimeout(resolve, backoffDelay));
+    }
+  }
+
+  throw lastError;
+}
+
+/**
+ * 타임아웃이 있는 fetch 요청
+ * @param url - 요청 URL
+ * @param options - fetch 옵션
+ * @param timeout - 타임아웃 (ms)
+ * @returns Response 객체
+ */
+async function fetchWithTimeout(
+  url: string,
+  options: RequestInit = {},
+  timeout: number = 30000
+): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new Error(`Request timeout after ${timeout}ms`);
+    }
+    throw error;
+  }
+}
 
 /**
  * 네이버 뉴스 검색 결과 크롤링
@@ -18,83 +89,96 @@ export async function fetchNaverNews(
   limit: number = 10
 ): Promise<ScrapedItemData[]> {
   const items: ScrapedItemData[] = [];
+  const config = getCrawlerConfig();
   
   try {
-    // 네이버 뉴스 검색 URL 구성
-    const searchUrl = new URL("https://search.naver.com/search.naver");
-    searchUrl.searchParams.set("where", "news");
-    searchUrl.searchParams.set("query", keyword);
-    if (category) {
-      searchUrl.searchParams.set("sm", "JFR");
-    }
-    searchUrl.searchParams.set("start", "1");
-    searchUrl.searchParams.set("display", limit.toString());
+    return await retryWithBackoff(async () => {
+      // 네이버 뉴스 검색 URL 구성
+      const searchUrl = new URL("https://search.naver.com/search.naver");
+      searchUrl.searchParams.set("where", "news");
+      searchUrl.searchParams.set("query", keyword);
+      if (category) {
+        searchUrl.searchParams.set("sm", "JFR");
+      }
+      searchUrl.searchParams.set("start", "1");
+      searchUrl.searchParams.set("display", limit.toString());
 
-    // User-Agent 설정 (크롤링 정책 준수)
-    const response = await fetch(searchUrl.toString(), {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const html = await response.text();
-    const $ = cheerio.load(html);
-
-    // 네이버 뉴스 검색 결과 파싱
-    $(".news_wrap").each((index, element) => {
-      if (items.length >= limit) return false;
-
-      const $el = $(element);
-      const titleEl = $el.find(".news_tit");
-      const title = titleEl.text().trim();
-      const url = titleEl.attr("href") || "";
-      const summaryEl = $el.find(".news_dsc");
-      const summary = summaryEl.text().trim();
-      const sourceEl = $el.find(".press");
-      const sourceDomain = extractDomain(url) || sourceEl.text().trim() || "naver.com";
-
-      if (title && url && summary) {
-        items.push({
-          source_domain: sourceDomain,
-          source_type: "news",
-          url: url,
-          title: title,
-          summary: summary.substring(0, 500), // 요약 길이 제한
-          tags: extractTags(title, summary),
-          extracted_data: {
-            source: sourceEl.text().trim(),
-            date: $el.find(".info").text().trim(),
+      // User-Agent 설정 (크롤링 정책 준수)
+      const response = await fetchWithTimeout(
+        searchUrl.toString(),
+        {
+          headers: {
+            "User-Agent": config.userAgent,
+            Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
           },
-        });
-      }
-    });
+        },
+        config.rateLimit.timeout
+      );
 
-    // 각 뉴스 기사 상세 정보 크롤링 (선택적)
-    for (const item of items.slice(0, Math.min(5, items.length))) {
-      try {
-        const articleData = await parseNewsArticle(item.url);
-        if (articleData) {
-          item.summary = articleData.summary || item.summary;
-          item.tags = [...new Set([...item.tags, ...articleData.tags])];
+      if (!response.ok) {
+        const error = new Error(`HTTP error! status: ${response.status}`);
+        const errorInfo = classifyError(error);
+        if (!errorInfo.retryable) {
+          throw error;
         }
-      } catch (error) {
-        console.warn(`Failed to parse article ${item.url}:`, error);
-        // 상세 파싱 실패해도 기본 정보는 유지
+        throw error;
       }
-    }
+
+      const html = await response.text();
+      const $ = cheerio.load(html);
+      const fetchedItems: ScrapedItemData[] = [];
+
+      // 네이버 뉴스 검색 결과 파싱
+      $(".news_wrap").each((index, element) => {
+        if (fetchedItems.length >= limit) return false;
+
+        const $el = $(element);
+        const titleEl = $el.find(".news_tit");
+        const title = titleEl.text().trim();
+        const url = titleEl.attr("href") || "";
+        const summaryEl = $el.find(".news_dsc");
+        const summary = summaryEl.text().trim();
+        const sourceEl = $el.find(".press");
+        const sourceDomain = extractDomain(url) || sourceEl.text().trim() || "naver.com";
+
+        if (title && url && summary) {
+          fetchedItems.push({
+            source_domain: sourceDomain,
+            source_type: "news",
+            url: url,
+            title: title,
+            summary: summary.substring(0, 500), // 요약 길이 제한
+            tags: extractTags(title, summary),
+            extracted_data: {
+              source: sourceEl.text().trim(),
+              date: $el.find(".info").text().trim(),
+            },
+          });
+        }
+      });
+
+      // 각 뉴스 기사 상세 정보 크롤링 (선택적)
+      for (const item of fetchedItems.slice(0, Math.min(5, fetchedItems.length))) {
+        try {
+          const articleData = await parseNewsArticle(item.url);
+          if (articleData) {
+            item.summary = articleData.summary || item.summary;
+            item.tags = [...new Set([...item.tags, ...articleData.tags])];
+          }
+        } catch (error) {
+          logCrawlWarn("", `Failed to parse article ${item.url}: ${error instanceof Error ? error.message : String(error)}`);
+          // 상세 파싱 실패해도 기본 정보는 유지
+        }
+      }
+
+      return fetchedItems;
+    }, config.rateLimit.maxRetries, config.rateLimit.retryDelay);
   } catch (error) {
-    console.error("Error fetching Naver news:", error);
+    const errorInfo = classifyError(error);
+    logCrawlError("", `Error fetching Naver news: ${errorInfo.message}`, error instanceof Error ? error : new Error(String(error)));
     throw error;
   }
-
-  return items;
 }
 
 /**
@@ -329,5 +413,415 @@ export function checkDuplicateUrl(
   existingUrls: Set<string>
 ): boolean {
   return existingUrls.has(`${packId}:${url}`);
+}
+
+/**
+ * 쿠팡 상품 검색 결과 크롤링
+ * @param keyword - 검색 키워드
+ * @param limit - 가져올 결과 수 (기본값: 10)
+ * @returns 크롤링된 상품 아이템 배열
+ */
+export async function fetchCoupangProducts(
+  keyword: string,
+  limit: number = 10
+): Promise<ScrapedItemData[]> {
+  const items: ScrapedItemData[] = [];
+
+  try {
+    const config = getCrawlerConfig();
+    const searchUrl = new URL("https://www.coupang.com/np/search");
+    searchUrl.searchParams.set("q", keyword);
+    searchUrl.searchParams.set("page", "1");
+    searchUrl.searchParams.set("listSize", limit.toString());
+
+    const response = await fetch(searchUrl.toString(), {
+      headers: {
+        "User-Agent": config.userAgent,
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const html = await response.text();
+    const $ = cheerio.load(html);
+
+    // 쿠팡 상품 검색 결과 파싱
+    $(".search-product, .baby-product, [data-product-id]").each((index, element) => {
+      if (items.length >= limit) return false;
+
+      const $el = $(element);
+      const titleEl = $el.find(".name, .product-name");
+      const title = titleEl.text().trim();
+      const urlEl = $el.find("a").first();
+      const url = urlEl.attr("href") || "";
+      const priceEl = $el.find(".price-value, .price");
+      const price = priceEl.text().trim();
+      const ratingEl = $el.find(".rating, .star-rating");
+      const rating = ratingEl.text().trim();
+
+      if (title && url) {
+        const fullUrl = url.startsWith("http") ? url : `https://www.coupang.com${url}`;
+        items.push({
+          source_domain: "coupang.com",
+          source_type: "market",
+          url: fullUrl,
+          title: title,
+          summary: `${title} - ${price ? `가격: ${price}` : ""} ${rating ? `평점: ${rating}` : ""}`.trim(),
+          tags: extractTags(title, ""),
+          extracted_data: {
+            price,
+            rating,
+            source: "coupang",
+          },
+        });
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching Coupang products:", error);
+    throw error;
+  }
+
+  return items;
+}
+
+/**
+ * 네이버 쇼핑 검색 결과 크롤링
+ * @param keyword - 검색 키워드
+ * @param limit - 가져올 결과 수 (기본값: 10)
+ * @returns 크롤링된 상품 아이템 배열
+ */
+export async function fetchNaverShopping(
+  keyword: string,
+  limit: number = 10
+): Promise<ScrapedItemData[]> {
+  const items: ScrapedItemData[] = [];
+
+  try {
+    const config = getCrawlerConfig();
+    const searchUrl = new URL("https://shopping.naver.com/search/all");
+    searchUrl.searchParams.set("query", keyword);
+    searchUrl.searchParams.set("pagingIndex", "1");
+    searchUrl.searchParams.set("pagingSize", limit.toString());
+
+    const response = await fetch(searchUrl.toString(), {
+      headers: {
+        "User-Agent": config.userAgent,
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const html = await response.text();
+    const $ = cheerio.load(html);
+
+    // 네이버 쇼핑 검색 결과 파싱
+    $(".product_item, .productList_item, [data-product-id]").each((index, element) => {
+      if (items.length >= limit) return false;
+
+      const $el = $(element);
+      const titleEl = $el.find(".product_title, .productName");
+      const title = titleEl.text().trim();
+      const urlEl = $el.find("a").first();
+      const url = urlEl.attr("href") || "";
+      const priceEl = $el.find(".price, .product_price");
+      const price = priceEl.text().trim();
+
+      if (title && url) {
+        const fullUrl = url.startsWith("http") ? url : `https://shopping.naver.com${url}`;
+        items.push({
+          source_domain: "shopping.naver.com",
+          source_type: "market",
+          url: fullUrl,
+          title: title,
+          summary: `${title} - ${price ? `가격: ${price}` : ""}`.trim(),
+          tags: extractTags(title, ""),
+          extracted_data: {
+            price,
+            source: "naver_shopping",
+          },
+        });
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching Naver shopping:", error);
+    throw error;
+  }
+
+  return items;
+}
+
+/**
+ * 네이버 부동산 매물 크롤링
+ * @param keyword - 검색 키워드
+ * @param limit - 가져올 결과 수 (기본값: 10)
+ * @returns 크롤링된 부동산 아이템 배열
+ */
+export async function fetchNaverRealEstate(
+  keyword: string,
+  limit: number = 10
+): Promise<ScrapedItemData[]> {
+  const items: ScrapedItemData[] = [];
+
+  try {
+    const config = getCrawlerConfig();
+    const searchUrl = new URL("https://land.naver.com/article/searchList.naver");
+    searchUrl.searchParams.set("query", keyword);
+    searchUrl.searchParams.set("page", "1");
+
+    const response = await fetch(searchUrl.toString(), {
+      headers: {
+        "User-Agent": config.userAgent,
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const html = await response.text();
+    const $ = cheerio.load(html);
+
+    // 네이버 부동산 매물 파싱
+    $(".item_list, .article_item, [data-article-id]").each((index, element) => {
+      if (items.length >= limit) return false;
+
+      const $el = $(element);
+      const titleEl = $el.find(".item_title, .article_title");
+      const title = titleEl.text().trim();
+      const urlEl = $el.find("a").first();
+      const url = urlEl.attr("href") || "";
+      const priceEl = $el.find(".price, .item_price");
+      const price = priceEl.text().trim();
+      const locationEl = $el.find(".location, .item_location");
+      const location = locationEl.text().trim();
+
+      if (title && url) {
+        const fullUrl = url.startsWith("http") ? url : `https://land.naver.com${url}`;
+        items.push({
+          source_domain: "land.naver.com",
+          source_type: "listing",
+          url: fullUrl,
+          title: title,
+          summary: `${title} - ${location ? `위치: ${location}` : ""} ${price ? `가격: ${price}` : ""}`.trim(),
+          tags: extractTags(title, location),
+          extracted_data: {
+            price,
+            location,
+            source: "naver_real_estate",
+          },
+        });
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching Naver real estate:", error);
+    throw error;
+  }
+
+  return items;
+}
+
+/**
+ * 네이버 증권 뉴스/정보 크롤링
+ * @param keyword - 검색 키워드
+ * @param limit - 가져올 결과 수 (기본값: 10)
+ * @returns 크롤링된 증권 아이템 배열
+ */
+export async function fetchNaverStock(
+  keyword: string,
+  limit: number = 10
+): Promise<ScrapedItemData[]> {
+  const items: ScrapedItemData[] = [];
+
+  try {
+    const config = getCrawlerConfig();
+    const searchUrl = new URL("https://finance.naver.com/news/news_search.naver");
+    searchUrl.searchParams.set("query", keyword);
+    searchUrl.searchParams.set("page", "1");
+
+    const response = await fetch(searchUrl.toString(), {
+      headers: {
+        "User-Agent": config.userAgent,
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const html = await response.text();
+    const $ = cheerio.load(html);
+
+    // 네이버 증권 뉴스 파싱
+    $(".article, .news_item, [data-article-id]").each((index, element) => {
+      if (items.length >= limit) return false;
+
+      const $el = $(element);
+      const titleEl = $el.find(".article_title, .title");
+      const title = titleEl.text().trim();
+      const urlEl = $el.find("a").first();
+      const url = urlEl.attr("href") || "";
+      const summaryEl = $el.find(".article_summary, .summary");
+      const summary = summaryEl.text().trim();
+
+      if (title && url) {
+        const fullUrl = url.startsWith("http") ? url : `https://finance.naver.com${url}`;
+        items.push({
+          source_domain: "finance.naver.com",
+          source_type: "news",
+          url: fullUrl,
+          title: title,
+          summary: summary || title,
+          tags: extractTags(title, summary),
+          extracted_data: {
+            source: "naver_stock",
+          },
+        });
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching Naver stock:", error);
+    throw error;
+  }
+
+  return items;
+}
+
+/**
+ * 네이버 블로그 포스트 크롤링
+ * @param keyword - 검색 키워드
+ * @param limit - 가져올 결과 수 (기본값: 10)
+ * @returns 크롤링된 블로그 아이템 배열
+ */
+export async function fetchNaverBlog(
+  keyword: string,
+  limit: number = 10
+): Promise<ScrapedItemData[]> {
+  const items: ScrapedItemData[] = [];
+
+  try {
+    const config = getCrawlerConfig();
+    const searchUrl = new URL("https://search.naver.com/search.naver");
+    searchUrl.searchParams.set("where", "post");
+    searchUrl.searchParams.set("query", keyword);
+    searchUrl.searchParams.set("start", "1");
+    searchUrl.searchParams.set("display", limit.toString());
+
+    const response = await fetch(searchUrl.toString(), {
+      headers: {
+        "User-Agent": config.userAgent,
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const html = await response.text();
+    const $ = cheerio.load(html);
+
+    // 네이버 블로그 검색 결과 파싱
+    $(".sh_blog_top, .api_subject_bx, .sh_blog_title").each((index, element) => {
+      if (items.length >= limit) return false;
+
+      const $el = $(element);
+      const titleEl = $el.find("a");
+      const title = titleEl.text().trim();
+      const url = titleEl.attr("href") || "";
+      const summaryEl = $el.find(".sh_blog_passage, .api_txt_lines");
+      const summary = summaryEl.text().trim();
+
+      if (title && url) {
+        items.push({
+          source_domain: extractDomain(url) || "blog.naver.com",
+          source_type: "blog",
+          url: url,
+          title: title,
+          summary: summary || title,
+          tags: extractTags(title, summary),
+          extracted_data: {
+            source: "naver_blog",
+          },
+        });
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching Naver blog:", error);
+    throw error;
+  }
+
+  return items;
+}
+
+/**
+ * 카테고리에 따라 적절한 크롤러 함수 자동 선택 및 실행
+ * @param category - 카테고리
+ * @param keyword - 검색 키워드
+ * @param limit - 가져올 결과 수
+ * @returns 크롤링된 아이템 배열
+ */
+export async function crawlByCategory(
+  category: string,
+  keyword: string,
+  limit: number = 10
+): Promise<ScrapedItemData[]> {
+  const config = getCrawlerConfig();
+  const sources = getSourcesForCategory(category as ValidCategory);
+  const allItems: ScrapedItemData[] = [];
+  const urlSet = new Set<string>();
+
+  // 각 소스에서 크롤링
+  for (const source of sources) {
+    try {
+      let items: ScrapedItemData[] = [];
+
+      switch (source) {
+        case "naver_news":
+          items = await fetchNaverNews(keyword, "", limit);
+          break;
+        case "naver_shopping":
+          items = await fetchNaverShopping(keyword, limit);
+          break;
+        case "coupang":
+          items = await fetchCoupangProducts(keyword, limit);
+          break;
+        case "naver_real_estate":
+          items = await fetchNaverRealEstate(keyword, limit);
+          break;
+        case "naver_stock":
+          items = await fetchNaverStock(keyword, limit);
+          break;
+        case "naver_blog":
+          items = await fetchNaverBlog(keyword, limit);
+          break;
+        default:
+          items = await fetchNaverNews(keyword, "", limit);
+      }
+
+      // 중복 제거 및 통합
+      items.forEach((item) => {
+        if (!urlSet.has(item.url)) {
+          urlSet.add(item.url);
+          allItems.push(item);
+        }
+      });
+
+      // Rate limiting
+      await new Promise((resolve) => setTimeout(resolve, config.rateLimit.delayBetweenRequests));
+    } catch (error) {
+      console.warn(`Failed to crawl from ${source}:`, error);
+      // 한 소스 실패해도 다른 소스 계속 시도
+    }
+  }
+
+  return allItems.slice(0, limit);
 }
 

@@ -89,3 +89,4 @@ export function LatestTrendsSection({ trendPacks }: LatestTrendsSectionProps) {
   );
 }
 
+

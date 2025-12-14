@@ -8,6 +8,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server-admin";
 import type { CrawlStatus } from "@/lib/types/crawler";
+import { getCrawlStats, getCrawlLogs } from "@/lib/utils/crawl-logger";
 
 export const dynamic = "force-dynamic";
 
@@ -78,10 +79,43 @@ export async function GET() {
       categoryCounts[pack.category] = (categoryCounts[pack.category] || 0) + 1;
     });
 
+    // 크롤링 로그에서 최근 에러 조회
+    const recentLogs = getCrawlLogs(50);
+    const recentErrors = recentLogs.filter((log) => log.level === "error");
+    const lastError = recentErrors.length > 0 ? recentErrors[0].message : null;
+
+    // 크롤링 통계 조회
+    const crawlStatsMap = getCrawlStats() as Map<string, CrawlStats>;
+    const categoryStats: Record<string, {
+      lastRunAt: number | null;
+      keywordsCollected: number;
+      itemsCrawled: number;
+      itemsSaved: number;
+      itemsSkipped: number;
+      errors: number;
+      warnings: number;
+      successRate: number;
+    }> = {};
+
+    crawlStatsMap.forEach((stats, category) => {
+      const total = stats.itemsCrawled + stats.errors;
+      const successRate = total > 0 ? (stats.itemsCrawled / total) * 100 : 0;
+      categoryStats[category] = {
+        lastRunAt: stats.endTime || stats.startTime,
+        keywordsCollected: stats.keywordsCollected,
+        itemsCrawled: stats.itemsCrawled,
+        itemsSaved: stats.itemsSaved,
+        itemsSkipped: stats.itemsSkipped,
+        errors: stats.errors,
+        warnings: stats.warnings,
+        successRate: Math.round(successRate * 100) / 100,
+      };
+    });
+
     const status: CrawlStatus = {
       lastRunAt,
       lastSuccessAt,
-      lastError: null, // 에러 로깅 시스템이 있다면 여기에 추가
+      lastError,
       totalItemsProcessed: totalItems || 0,
       totalPacksCreated: totalPacks || 0,
       isRunning: false, // 실행 중인지 확인하는 로직이 있다면 여기에 추가
@@ -94,10 +128,17 @@ export async function GET() {
         totalPacks: totalPacks || 0,
         totalItems: totalItems || 0,
         categoryCounts,
+        categoryStats,
         recentPacks: recentPacks?.slice(0, 5).map((pack) => ({
           id: pack.id,
           generatedAt: pack.generated_at || pack.created_at,
           status: pack.status,
+        })),
+        recentLogs: recentLogs.slice(-10).map((log) => ({
+          timestamp: log.timestamp,
+          level: log.level,
+          category: log.category,
+          message: log.message,
         })),
       },
     });

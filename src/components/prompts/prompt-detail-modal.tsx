@@ -11,6 +11,11 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { CopyButton } from "./copy-button";
 import type { Database } from "@/../database.types";
+import {
+  parseVariableGuide,
+  parseExampleInputs,
+  createPromptWithVariables,
+} from "@/lib/utils/prompt";
 
 type PromptTemplate = Database["public"]["Tables"]["prompt_templates"]["Row"];
 
@@ -60,11 +65,15 @@ export function PromptDetailModal({
     }
   }, [isOpen, prompt.id]);
 
-  const variables = Array.isArray(prompt.variables) ? prompt.variables : [];
-  const exampleInputs =
-    typeof prompt.example_inputs === "object" && prompt.example_inputs !== null
-      ? prompt.example_inputs
-      : {};
+  // 변수 가이드 파싱
+  const variableGuides = parseVariableGuide(prompt.variables);
+  const exampleInputs = parseExampleInputs(prompt.example_inputs);
+  
+  // 변수 치환된 프롬프트 생성 (미리보기용)
+  const previewContent = createPromptWithVariables(
+    prompt.content,
+    prompt.example_inputs
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -100,14 +109,26 @@ export function PromptDetailModal({
           </div>
 
           {/* 변수 가이드 */}
-          {variables.length > 0 && (
+          {variableGuides.length > 0 && (
             <div>
               <h3 className="text-lg font-semibold mb-2">변수 가이드</h3>
               <div className="bg-muted rounded-lg p-4">
-                <ul className="list-disc list-inside space-y-1">
-                  {variables.map((variable: string, index: number) => (
+                <ul className="space-y-3">
+                  {variableGuides.map((guide, index) => (
                     <li key={index} className="text-sm">
-                      {variable}
+                      <div className="font-semibold text-foreground mb-1">
+                        {`{${guide.name}}`}
+                      </div>
+                      {guide.description && (
+                        <div className="text-muted-foreground mb-1">
+                          {guide.description}
+                        </div>
+                      )}
+                      {guide.example && (
+                        <div className="text-muted-foreground italic">
+                          예시: {guide.example}
+                        </div>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -126,9 +147,25 @@ export function PromptDetailModal({
               </div>
             </div>
           )}
+
+          {/* 변수 치환 미리보기 */}
+          {Object.keys(exampleInputs).length > 0 && previewContent !== prompt.content && (
+            <div>
+              <h3 className="text-lg font-semibold mb-2">변수 치환 미리보기</h3>
+              <div className="bg-muted rounded-lg p-4 border-2 border-primary/20">
+                <pre className="whitespace-pre-wrap text-sm font-mono">
+                  {previewContent}
+                </pre>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                복사 버튼을 누르면 이 내용이 복사됩니다.
+              </p>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
   );
 }
+
 

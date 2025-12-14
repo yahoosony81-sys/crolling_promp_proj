@@ -315,18 +315,18 @@
     - [x] `docs/WEBHOOK_SETUP.md` 환경 변수 설정 가이드 업데이트 (결제 API 키 설정 방법, 테스트 결제 안내 추가)
 
 ## 크롤링/스크래핑 기능 (백엔드)
-- [ ] 크롤링 스크립트 개발
-  - [ ] 주간 트렌드 키워드 수집
-  - [ ] 카테고리별 데이터 수집
-  - [ ] 데이터 요약 및 가공
-- [ ] 배치 작업 설정
-  - [ ] 주 1~2회 자동 실행 스케줄러
-  - [ ] 트렌드 패키지 자동 생성
-  - [ ] 스크랩 아이템 자동 저장
-- [ ] 데이터 품질 관리
-  - [ ] 중복 URL 체크
-  - [ ] 데이터 검증 로직
-  - [ ] 에러 핸들링
+- [x] 크롤링 스크립트 개발
+  - [x] 주간 트렌드 키워드 수집
+  - [x] 카테고리별 데이터 수집
+  - [x] 데이터 요약 및 가공
+- [x] 배치 작업 설정
+  - [x] 주 1~2회 자동 실행 스케줄러
+  - [x] 트렌드 패키지 자동 생성
+  - [x] 스크랩 아이템 자동 저장
+- [x] 데이터 품질 관리
+  - [x] 중복 URL 체크
+  - [x] 데이터 검증 로직
+  - [x] 에러 핸들링
   ---
   - [x] 크롤링/스크래핑 기능 구현 세부 작업 (plan 모드 build)
     - [x] `src/lib/types/crawler.ts` 크롤링 관련 타입 정의 생성 (ScrapedItemData, CrawlConfig, TrendKeyword, CrawlResult, CrawlStatus)
@@ -339,22 +339,45 @@
     - [x] `src/app/api/crawl/status/route.ts` 크롤링 상태 조회 API 라우트 생성 (GET 메서드, 최근 실행 시간 및 통계 조회)
     - [x] `vercel.json` Vercel Cron 설정 (주 1회 자동 실행 스케줄: 매주 월요일 오전 2시)
     - [x] `cheerio` 패키지 설치 (HTML 파싱용)
+  ---
+  - [x] 크롤링 스크립트 개발 개선 및 확장 (plan 모드 build)
+    - [x] `src/lib/config/crawler-config.ts` 크롤링 설정 및 환경 변수 관리 시스템 구축 (Rate limiting, 카테고리별 소스 우선순위 설정)
+    - [x] `src/lib/utils/crawl-logger.ts` 크롤링 로깅 시스템 구축 (구조화된 로깅 함수, 통계 수집, 에러 분류)
+    - [x] `src/lib/utils/trend-keywords.ts` 트렌드 키워드 수집 소스 확장 (네이버 실시간 검색어, 쿠팡, 네이버 쇼핑, 부동산, 증권 키워드 수집 함수 추가)
+    - [x] `src/lib/utils/crawler.ts` 카테고리별 데이터 수집 소스 추가 (쿠팡, 네이버 쇼핑, 부동산, 증권, 블로그 크롤러 구현, 통합 크롤링 함수 추가)
+    - [x] `src/lib/utils/data-processor.ts` 데이터 가공 로직 개선 (구조화된 데이터 추출, 카테고리별 특화 요약 로직, 품질 점수 계산)
+    - [x] `src/lib/utils/crawler.ts` 에러 핸들링 및 재시도 로직 강화 (retryWithBackoff 구현, 타임아웃 설정, 에러 분류 및 처리 개선)
+    - [x] `src/app/api/crawl/run/route.ts` 크롤링 실행 API 개선 (카테고리별 에러 처리 개선, 상세한 에러 메시지 반환, 로깅 시스템 통합)
+    - [x] `src/app/api/crawl/status/route.ts` 크롤링 상태 조회 API 개선 (더 상세한 통계 정보 반환, 카테고리별 성공률 추적, 최근 로그 조회)
 
 ## 유틸리티 및 헬퍼 함수
-- [ ] `lib/utils/prompt.ts` 프롬프트 관련 유틸
-  - [ ] 프롬프트 변수 치환 함수
-  - [ ] 프롬프트 포맷팅 함수
+- [x] `lib/utils/prompt.ts` 프롬프트 관련 유틸
+  - [x] 프롬프트 변수 치환 함수
+  - [x] 프롬프트 포맷팅 함수
+  ---
+  - [x] `lib/utils/prompt.ts` 프롬프트 관련 유틸 구현 세부 작업 (plan 모드 build)
+    - [x] `src/lib/types/prompt.ts` 프롬프트 관련 타입 정의 생성 (VariableGuide, PromptInputs, VariableValidationResult)
+    - [x] `src/lib/utils/prompt.ts` 프롬프트 유틸리티 함수 구현
+      - [x] `replaceVariables()` 변수 치환 함수 구현 (중괄호 변수를 실제 값으로 치환)
+      - [x] `extractVariables()` 변수 추출 함수 구현 (프롬프트 본문에서 변수명 목록 추출, 중복 제거)
+      - [x] `validateVariables()` 변수 검증 함수 구현 (필요한 변수 제공 여부 확인)
+      - [x] `formatPrompt()` 프롬프트 포맷팅 함수 구현 (들여쓰기 옵션 지원)
+      - [x] `parseVariableGuide()` 변수 가이드 파싱 함수 구현 (JSONB를 타입 안전한 배열로 변환)
+      - [x] `parseExampleInputs()` 예시 입력값 파싱 함수 구현 (JSONB를 객체로 변환)
+      - [x] `createPromptWithVariables()` 변수 치환된 프롬프트 생성 함수 구현 (통합 헬퍼 함수)
+    - [x] `src/components/prompts/copy-button.tsx` 변수 치환 기능 통합 (example_inputs가 있으면 자동 치환된 프롬프트 복사)
+    - [x] `src/components/prompts/prompt-detail-modal.tsx` 변수 가이드 표시 개선 (parseVariableGuide 사용, 변수 치환 미리보기 추가)
 - [x] `lib/utils/subscription.ts` 구독 관련 유틸
   - [x] 구독 상태 체크 함수
   - [x] 구독 만료일 계산 함수
 - [x] `lib/utils/trend.ts` 트렌드 관련 유틸
   - [x] 주차 키 생성 함수 (week_key)
-  - [ ] 트렌드 키워드 추출 함수
+  - [x] 트렌드 키워드 추출 함수
 
 ## 타입 정의
 - [ ] `types/database.ts` 데이터베이스 타입 생성
   - [ ] Supabase 타입 자동 생성 스크립트 실행
-- [ ] `types/prompt.ts` 프롬프트 관련 타입
+- [x] `types/prompt.ts` 프롬프트 관련 타입
 - [ ] `types/trend.ts` 트렌드 관련 타입
 - [ ] `types/subscription.ts` 구독 관련 타입
 
