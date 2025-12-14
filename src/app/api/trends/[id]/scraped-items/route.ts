@@ -22,13 +22,14 @@ export const dynamic = "force-dynamic";
  */
 async function GETHandler(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // 인증 및 구독 체크
   await requireSubscription();
 
-  // 경로 파라미터 검증
-  const paramsValidation = GetTrendParamsSchema.safeParse(params);
+  // 경로 파라미터 검증 (params를 먼저 await 해야 함)
+  const resolvedParams = await params;
+  const paramsValidation = GetTrendParamsSchema.safeParse(resolvedParams);
   if (!paramsValidation.success) {
     return validationError("Invalid path parameters", paramsValidation.error.errors);
   }

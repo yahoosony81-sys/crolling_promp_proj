@@ -21,12 +21,12 @@ const UUID_REGEX =
  */
 async function GETHandler(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // 인증 및 구독 체크
   await requireSubscription();
 
-  const { id } = params;
+  const { id } = await params;
 
   // UUID 형식 검증
   if (!id || !UUID_REGEX.test(id)) {
