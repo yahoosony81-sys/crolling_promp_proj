@@ -106,8 +106,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // 임시 디버깅 (개발 환경에서만)
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Clerk Publishable Key:', process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? '설정됨' : '없음');
+    console.log('App URL:', process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || '없음');
+  }
+
   return (
-    <ClerkProvider localization={koKR}>
+    <ClerkProvider 
+      localization={koKR}
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+    >
       <html lang="ko" suppressHydrationWarning>
         <head>
           {/* 리소스 힌트: 외부 도메인 사전 연결 */}
