@@ -31,7 +31,7 @@ async function GETHandler(
   const resolvedParams = await params;
   const paramsValidation = GetTrendParamsSchema.safeParse(resolvedParams);
   if (!paramsValidation.success) {
-    return validationError("Invalid path parameters", paramsValidation.error.errors);
+    return validationError("Invalid path parameters", paramsValidation.error.issues);
   }
 
   const { id } = paramsValidation.data;
@@ -42,7 +42,7 @@ async function GETHandler(
   
   const queryValidation = GetScrapedItemsQuerySchema.safeParse(queryParams);
   if (!queryValidation.success) {
-    return validationError("Invalid query parameters", queryValidation.error.errors);
+    return validationError("Invalid query parameters", queryValidation.error.issues);
   }
 
   const { limit, offset } = queryValidation.data;
