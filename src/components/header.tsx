@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import { LuMenu, LuX } from "react-icons/lu";
+import { LuMenu } from "react-icons/lu";
 import { useState } from "react";
 import { Profile } from "@/components/profile";
 import { ThemeSwitcher } from "@/components/theme-switcher";
@@ -27,7 +27,7 @@ const navigationItems = [
 
 export function Header() {
   const pathname = usePathname();
-  const { isLoaded, isSignedIn } = useUser();
+  const { isSignedIn } = useUser();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // 인증이 필요한 메뉴 항목 필터링

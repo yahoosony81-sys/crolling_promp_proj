@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import Script from "next/script";
 import { Button } from "@/components/ui/button";
-import { LuLoader, LuCircleCheck, LuCircle } from "react-icons/lu";
+import { LuLoader, LuCircle } from "react-icons/lu";
 import { toast } from "sonner";
 
 declare global {
@@ -42,7 +41,6 @@ export function PaymentWidget({
   successUrl,
   failUrl,
 }: PaymentWidgetProps) {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isSdkLoaded, setIsSdkLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);

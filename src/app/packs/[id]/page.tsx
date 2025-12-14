@@ -20,6 +20,11 @@ interface PackWithPrompts extends PromptTemplate {
   pack_prompts: PackPrompt;
 }
 
+// Supabase 조인 쿼리 결과 타입
+type PackPromptQueryResult = PackPrompt & {
+  prompt_templates: PromptTemplate | null;
+};
+
 async function getPackById(id: string): Promise<TrendPack | null> {
   try {
     const supabase = await createClient();
@@ -102,16 +107,21 @@ async function getPackPrompts(packId: string): Promise<PackWithPrompts[]> {
     }
 
     // 데이터 구조 변환
-    const prompts = (data || []).map((item: any) => ({
-      ...item.prompt_templates,
-      pack_prompts: {
-        id: item.id,
-        pack_id: item.pack_id,
-        prompt_id: item.prompt_id,
-        sort_order: item.sort_order,
-        created_at: item.created_at,
-      },
-    })) as PackWithPrompts[];
+    const prompts = (data || []).map((item: PackPromptQueryResult) => {
+      if (!item.prompt_templates) {
+        throw new Error(`프롬프트 템플릿을 찾을 수 없습니다: ${item.prompt_id}`);
+      }
+      return {
+        ...item.prompt_templates,
+        pack_prompts: {
+          id: item.id,
+          pack_id: item.pack_id,
+          prompt_id: item.prompt_id,
+          sort_order: item.sort_order,
+          created_at: item.created_at,
+        },
+      } as PackWithPrompts;
+    });
 
     return prompts;
   } catch (error) {

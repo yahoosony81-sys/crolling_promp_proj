@@ -9,7 +9,7 @@ export function HeroSection() {
           매주 업데이트되는 트렌드 프롬프트
         </h1>
         <p className="text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl lg:text-2xl">
-          기존 프롬프트 서비스는 "한 번 만들어 놓은 프롬프트"를 반복 제공하지만,
+          기존 프롬프트 서비스는 &quot;한 번 만들어 놓은 프롬프트&quot;를 반복 제공하지만,
           <br className="hidden sm:block" />
           TrendScrape Prompt는{" "}
           <span className="font-semibold text-foreground">
@@ -17,9 +17,9 @@ export function HeroSection() {
           </span>
           를 제공합니다.
           <br className="hidden sm:block" />
-          프롬프트를 '지식'이 아니라{" "}
+          프롬프트를 &apos;지식&apos;이 아니라{" "}
           <span className="font-semibold text-foreground">
-            '시의성 있는 실행 도구'
+            &apos;시의성 있는 실행 도구&apos;
           </span>
           로 재정의합니다.
         </p>

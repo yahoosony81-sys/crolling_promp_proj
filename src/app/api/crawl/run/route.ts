@@ -168,7 +168,6 @@ async function POSTHandler(request: Request) {
         const promptsLinked = await linkPromptsToPack(packId, category);
         logCrawlSuccess(category, `프롬프트 연결 완료: ${promptsLinked}개`);
 
-        const stats = getCrawlStats(category) as CrawlStats;
         results[category] = {
           packId,
           keywords: keywords.length,
