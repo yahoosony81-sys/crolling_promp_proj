@@ -28,30 +28,30 @@ export function ScrapedItemCard({ item }: ScrapedItemCardProps) {
 
   return (
     <Card 
-      className="flex flex-col transition-all duration-200 hover:shadow-lg"
+      className="flex flex-col transition-all duration-200 hover:shadow-lg hover:-translate-y-1"
       role="article"
       aria-labelledby={`item-title-${item.id}`}
     >
-      <CardHeader>
+      <CardHeader className="pb-3 sm:pb-6">
         <div className="flex items-start justify-between gap-2">
           <CardTitle 
             id={`item-title-${item.id}`}
-            className="text-lg line-clamp-2"
+            className="text-base line-clamp-2 sm:text-lg"
           >
             {item.title}
           </CardTitle>
         </div>
         <div className="mt-2 flex flex-wrap gap-2" role="list" aria-label="출처 정보">
-          <Badge variant="secondary" className="w-fit" role="listitem">
+          <Badge variant="secondary" className="w-fit text-xs sm:text-sm" role="listitem">
             {item.source_domain}
           </Badge>
-          <Badge variant="outline" className="w-fit" role="listitem">
+          <Badge variant="outline" className="w-fit text-xs sm:text-sm" role="listitem">
             {sourceTypeLabel}
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="flex-1">
-        <CardDescription className="line-clamp-3 mb-4">
+      <CardContent className="flex-1 pt-0">
+        <CardDescription className="line-clamp-3 mb-4 text-sm leading-relaxed sm:text-base">
           {item.summary}
         </CardDescription>
         {item.tags && item.tags.length > 0 && (
@@ -85,7 +85,7 @@ export function ScrapedItemCard({ item }: ScrapedItemCardProps) {
         <Button 
           asChild 
           variant="outline" 
-          className="w-full" 
+          className="w-full min-h-[44px]" 
           aria-label={`${item.title} 원문 보기`}
         >
           <Link 

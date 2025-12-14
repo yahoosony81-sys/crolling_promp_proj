@@ -157,7 +157,7 @@ export default async function PackDetailPage({ params }: Props) {
   }
 
   return (
-    <div className="container py-8 md:py-12">
+    <div className="container py-6 sm:py-8 md:py-12">
       {!hasSubscription ? (
         <SubscriptionGate />
       ) : (

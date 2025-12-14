@@ -31,24 +31,24 @@ const differentiators = [
 
 export function DifferentiatorsSection() {
   return (
-    <section className="py-16 md:py-24">
+    <section className="py-12 sm:py-16 md:py-24">
       <div className="container px-4">
-        <div className="mb-12 text-center">
-          <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
+        <div className="mb-8 text-center sm:mb-12">
+          <h2 className="mb-3 text-2xl font-bold tracking-tight sm:mb-4 sm:text-3xl md:text-4xl">
             왜 TrendScrape Prompt인가요?
           </h2>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-base text-muted-foreground sm:text-lg">
             기존 프롬프트 서비스와는 다른 차별화된 경험을 제공합니다
           </p>
         </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-4">
           {differentiators.map((item, index) => (
             <Card key={index} className="flex flex-col">
-              <CardHeader>
-                <CardTitle className="text-lg">{item.title}</CardTitle>
+              <CardHeader className="pb-3 sm:pb-6">
+                <CardTitle className="text-base sm:text-lg">{item.title}</CardTitle>
               </CardHeader>
-              <CardContent className="flex-1">
-                <CardDescription className="text-base">
+              <CardContent className="flex-1 pt-0">
+                <CardDescription className="text-sm leading-relaxed sm:text-base">
                   {item.description}
                 </CardDescription>
               </CardContent>

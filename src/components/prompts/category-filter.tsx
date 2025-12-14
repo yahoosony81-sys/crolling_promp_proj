@@ -34,6 +34,7 @@ export function CategoryFilter({
           size="sm"
           onClick={() => onCategoryChange(category.value)}
           className={cn(
+            "min-h-[36px] text-xs sm:text-sm",
             selectedCategory === category.value &&
               "bg-primary text-primary-foreground"
           )}

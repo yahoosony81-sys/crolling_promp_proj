@@ -2,12 +2,22 @@ import { LuLoader } from "react-icons/lu"
 
 import { cn } from "@/lib/utils"
 
-function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
+interface SpinnerProps extends React.ComponentProps<"svg"> {
+  size?: "sm" | "md" | "lg";
+}
+
+const sizeMap = {
+  sm: "size-4",
+  md: "size-6",
+  lg: "size-8",
+};
+
+function Spinner({ className, size = "md", ...props }: SpinnerProps) {
   return (
     <LuLoader
       role="status"
       aria-label="Loading"
-      className={cn("size-4 animate-spin", className)}
+      className={cn("animate-spin", sizeMap[size], className)}
       {...props}
     />
   )

@@ -23,8 +23,8 @@ export function PackDetailSkeleton() {
 
       {/* 수집 데이터 섹션 스켈레톤 */}
       <section>
-        <Skeleton className="mb-6 h-8 w-48" />
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <Skeleton className="mb-4 h-7 w-48 sm:mb-6 sm:h-8" />
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 3 }).map((_, index) => (
             <Card key={index} className="flex flex-col">
               <CardHeader>
@@ -60,7 +60,7 @@ export function PackDetailSkeleton() {
 
       {/* 프롬프트 리스트 스켈레톤 */}
       <section>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, index) => (
             <Card key={index} className="flex flex-col">
               <CardHeader>

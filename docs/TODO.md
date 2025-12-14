@@ -447,13 +447,53 @@
     - [x] `src/components/theme-switcher.tsx` 개선 (한국어 레이블 추가, 접근성 개선: ARIA 레이블, 키보드 네비게이션, role="menuitemradio")
     - [x] 주요 페이지에서 다크 모드 렌더링 검증 (모든 페이지와 컴포넌트에서 다크 모드 작동 확인, Tailwind 시맨틱 색상 클래스 사용 확인)
     - [x] `docs/THEME.md` 테마 시스템 사용 가이드 문서 작성 (테마 시스템 개요, 색상 팔레트 설명, 사용 방법, 커스텀 색상 추가 방법)
-- [ ] 반응형 디자인
-  - [ ] 모바일 최적화
-  - [ ] 태블릿 레이아웃
-- [ ] 애니메이션 및 인터랙션
-  - [ ] 로딩 상태 표시
-  - [ ] 프롬프트 복사 피드백
-  - [ ] 페이지 전환 애니메이션
+- [x] 반응형 디자인
+  - [x] 모바일 최적화
+  - [x] 태블릿 레이아웃
+- [x] 애니메이션 및 인터랙션
+  - [x] 로딩 상태 표시
+  - [x] 프롬프트 복사 피드백
+  - [x] 페이지 전환 애니메이션
+  ---
+  - [x] 반응형 디자인 및 애니메이션 개선 구현 세부 작업 (plan 모드 build)
+    - [x] `src/lib/constants/breakpoints.ts` 브레이크포인트 상수 정의 (모바일, 태블릿, 데스크톱 브레이크포인트)
+    - [x] `src/hooks/use-breakpoint.ts` 반응형 훅 생성 (useIsMobile, useIsTablet, useDeviceType, useBreakpoint)
+    - [x] `src/lib/utils/responsive.ts` 반응형 유틸리티 함수 생성 (getGridCols, getResponsivePadding, getResponsiveMargin, getResponsiveTextSize, getResponsiveGap)
+    - [x] `src/components/header.tsx` 모바일 메뉴 터치 영역 확대 (최소 44x44px), 키보드 네비게이션 개선
+    - [x] `src/components/footer.tsx` 모바일 링크 간격 조정, 텍스트 크기 최적화, 키보드 포커스 스타일 추가
+    - [x] `src/components/landing/hero-section.tsx` 모바일 타이포그래피 조정 (텍스트 크기, 줄 간격)
+    - [x] `src/components/landing/differentiators-section.tsx` 모바일 카드 레이아웃 세로 스택, 패딩 조정
+    - [x] `src/components/landing/latest-trends-section.tsx` 모바일 그리드 1열, 카드 패딩 조정
+    - [x] `src/components/landing/free-prompts-section.tsx` 모바일 그리드 1열, 카드 패딩 조정
+    - [x] `src/app/free/page.tsx` 모바일 패딩 조정, 제목 크기 최적화
+    - [x] `src/components/prompts/prompt-card.tsx` 모바일 카드 패딩 조정, 버튼 크기 확대, 호버 효과 추가
+    - [x] `src/components/prompts/prompt-list.tsx` 모바일 그리드 1열, 태블릿 2열, 데스크톱 3열 적용
+    - [x] `src/components/prompts/category-filter.tsx` 모바일 버튼 크기 및 텍스트 크기 조정
+    - [x] `src/app/trends/page.tsx` 모바일 패딩 조정, 제목 크기 최적화
+    - [x] `src/components/trends/trend-pack-card.tsx` 모바일 카드 레이아웃 최적화, 호버 효과 개선
+    - [x] `src/components/trends/trend-pack-list.tsx` 모바일 1열, 태블릿 2열, 데스크톱 3열 적용
+    - [x] `src/app/packs/[id]/page.tsx` 모바일 패딩 조정
+    - [x] `src/components/packs/scraped-item-card.tsx` 모바일 카드 레이아웃 최적화, 호버 효과 추가
+    - [x] `src/components/packs/scraped-items-section.tsx` 모바일 그리드 1열, 태블릿 2열, 데스크톱 3열 적용
+    - [x] `src/components/packs/purpose-selector.tsx` 모바일 버튼 크기 및 간격 조정
+    - [x] `src/app/pricing/page.tsx` 모바일 패딩 조정 (테이블은 이미 카드 형태로 최적화됨)
+    - [x] `src/app/account/page.tsx` 모바일 섹션 간격 조정
+    - [x] `src/components/header.tsx` 태블릿에서 데스크톱 네비게이션 표시 (sm 이상)
+    - [x] `src/components/ui/spinner.tsx` 크기 변형 추가 (sm, md, lg)
+    - [x] `src/components/ui/skeleton-variants.tsx` 다양한 스켈레톤 변형 추가 (SkeletonText, SkeletonCard, SkeletonList)
+    - [x] `src/components/ui/loading-overlay.tsx` 전체 페이지 로딩 오버레이 컴포넌트 생성
+    - [x] `src/app/free/loading.tsx` 프롬프트 리스트 스켈레톤 생성
+    - [x] `src/app/pricing/loading.tsx` 가격 테이블 스켈레톤 생성
+    - [x] `src/app/account/loading.tsx` 계정 정보 스켈레톤 생성
+    - [x] `src/app/packs/[id]/loading.tsx` 패키지 상세 스켈레톤 개선 (반응형 그리드 적용)
+    - [x] `src/components/prompts/copy-button.tsx` 복사 성공 시 아이콘 애니메이션 추가, 버튼 상태 전환 애니메이션 추가
+    - [x] `src/app/template.tsx` 페이지 전환 애니메이션 래퍼 생성
+    - [x] `src/components/ui/transition.tsx` 재사용 가능한 전환 컴포넌트 생성 (Transition, FadeIn, SlideUp)
+    - [x] `src/components/ui/button.tsx` active 상태 스타일 추가 (scale 효과)
+    - [x] `src/components/ui/input.tsx` 포커스 애니메이션 개선 (transition-duration, shadow 효과)
+    - [x] `src/app/globals.css` prefers-reduced-motion 미디어 쿼리 추가 (애니메이션 선호도 설정 지원)
+    - [x] `docs/RESPONSIVE.md` 반응형 디자인 가이드 문서 작성
+    - [x] `docs/ANIMATIONS.md` 애니메이션 가이드 문서 작성
 
 ## SEO 및 메타데이터
 - [ ] `app/robots.ts` robots.txt 설정

@@ -23,8 +23,8 @@ export function PurposeSelector({
   onPurposeChange,
 }: PurposeSelectorProps) {
   return (
-    <div className="mb-8">
-      <h2 className="mb-4 text-2xl font-bold tracking-tight">
+    <div className="mb-6 sm:mb-8">
+      <h2 className="mb-3 text-xl font-bold tracking-tight sm:mb-4 sm:text-2xl">
         목적별 프롬프트
       </h2>
       <div 
@@ -38,7 +38,7 @@ export function PurposeSelector({
             variant={selectedPurpose === purpose.value ? "default" : "outline"}
             onClick={() => onPurposeChange(purpose.value)}
             className={cn(
-              "flex-shrink-0 whitespace-nowrap",
+              "flex-shrink-0 whitespace-nowrap min-h-[44px] text-sm sm:text-base",
               selectedPurpose === purpose.value && "bg-primary text-primary-foreground"
             )}
             role="tab"

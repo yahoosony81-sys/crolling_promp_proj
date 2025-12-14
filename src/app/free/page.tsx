@@ -33,9 +33,9 @@ export default async function FreePromptsPage() {
   const prompts = await getAllFreePrompts();
 
   return (
-    <div className="container py-8 md:py-12">
-      <div className="mb-8 text-center">
-        <h1 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
+    <div className="container py-6 sm:py-8 md:py-12">
+      <div className="mb-6 text-center sm:mb-8">
+        <h1 className="mb-3 text-2xl font-bold tracking-tight sm:mb-4 sm:text-3xl md:text-4xl">
           무료 프롬프트 10선
         </h1>
       </div>

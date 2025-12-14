@@ -35,24 +35,24 @@ export function PromptCard({ prompt }: PromptCardProps) {
 
   return (
     <>
-      <Card className="flex flex-col">
-        <CardHeader>
+      <Card className="flex flex-col transition-shadow hover:shadow-md">
+        <CardHeader className="pb-3 sm:pb-6">
           <div className="flex items-start justify-between gap-2">
-            <CardTitle className="text-lg line-clamp-2">{prompt.title}</CardTitle>
+            <CardTitle className="text-base line-clamp-2 sm:text-lg">{prompt.title}</CardTitle>
           </div>
-          <Badge variant="secondary" className="mt-2 w-fit">
+          <Badge variant="secondary" className="mt-2 w-fit text-xs sm:text-sm">
             {categoryLabels[prompt.category] || prompt.category}
           </Badge>
         </CardHeader>
-        <CardContent className="flex-1">
-          <CardDescription className="line-clamp-3 mb-4">
+        <CardContent className="flex-1 pt-0">
+          <CardDescription className="line-clamp-3 mb-4 text-sm leading-relaxed sm:text-base">
             {prompt.description || prompt.content.slice(0, 150) + "..."}
           </CardDescription>
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             <CopyButton prompt={prompt} />
             <Button
               variant="outline"
-              className="flex-1"
+              className="flex-1 min-h-[44px]"
               onClick={() => setIsModalOpen(true)}
             >
               자세히 보기

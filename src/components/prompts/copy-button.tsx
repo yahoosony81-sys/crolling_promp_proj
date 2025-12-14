@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { LuCopy, LuCheck } from "react-icons/lu";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import type { Database } from "@/lib/types/database";
 import { createPromptWithVariables } from "@/lib/utils/prompt";
 
@@ -65,17 +66,21 @@ export function CopyButton({ prompt, packId }: CopyButtonProps) {
       variant="outline"
       size="sm"
       onClick={handleCopy}
-      className="flex items-center gap-2"
+      className={cn(
+        "flex items-center gap-2 min-h-[36px] transition-all duration-200",
+        copied && "bg-primary text-primary-foreground"
+      )}
+      aria-label={copied ? "복사됨" : "프롬프트 복사"}
     >
       {copied ? (
         <>
-          <LuCheck className="size-4" />
-          복사됨
+          <LuCheck className="size-4 animate-in fade-in-0 duration-200" />
+          <span>복사됨</span>
         </>
       ) : (
         <>
           <LuCopy className="size-4" />
-          복사
+          <span>복사</span>
         </>
       )}
     </Button>

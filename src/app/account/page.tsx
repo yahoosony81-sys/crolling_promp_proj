@@ -31,37 +31,37 @@ export default async function AccountPage() {
   const subscription = await getUserSubscription(userId);
 
   return (
-    <div className="container py-8 md:py-12">
+    <div className="container py-6 sm:py-8 md:py-12">
       {/* 헤더 섹션 */}
-      <div className="mb-8">
-        <h1 className="mb-2 text-3xl font-bold tracking-tight md:text-4xl">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="mb-2 text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">
           내 계정
         </h1>
-        <p className="text-lg text-muted-foreground">
+        <p className="text-base text-muted-foreground sm:text-lg">
           구독 상태와 이용 기록을 확인하세요
         </p>
       </div>
 
       {/* 구독 상태 및 결제 정보 섹션 */}
-      <div className="mb-8 grid gap-6 md:grid-cols-2">
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:mb-8 sm:gap-6 md:grid-cols-2">
         <SubscriptionStatus subscription={subscription} />
         <PaymentInfo subscription={subscription} />
       </div>
 
       {/* 구독 취소 섹션 */}
       {subscription && (
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <CancelSubscription subscription={subscription} />
         </div>
       )}
 
       {/* 이용 기록 섹션 */}
-      <div className="mb-8">
+      <div className="mb-6 sm:mb-8">
         <UsageHistory />
       </div>
 
       {/* 결제 내역 섹션 */}
-      <div className="mb-8">
+      <div className="mb-6 sm:mb-8">
         <PaymentHistory />
       </div>
     </div>

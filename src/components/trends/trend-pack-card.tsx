@@ -32,26 +32,26 @@ export function TrendPackCard({ pack }: TrendPackCardProps) {
       role="article"
       aria-labelledby={`pack-title-${pack.id}`}
     >
-      <CardHeader>
+      <CardHeader className="pb-3 sm:pb-6">
         <div className="flex items-start justify-between gap-2">
           <CardTitle 
             id={`pack-title-${pack.id}`}
-            className="text-lg line-clamp-2"
+            className="text-base line-clamp-2 sm:text-lg"
           >
             {pack.title}
           </CardTitle>
         </div>
         <div className="mt-2 flex flex-wrap gap-2" role="list" aria-label="카테고리 및 주차 정보">
-          <Badge variant="secondary" className="w-fit" role="listitem">
+          <Badge variant="secondary" className="w-fit text-xs sm:text-sm" role="listitem">
             {categoryLabel}
           </Badge>
-          <Badge variant="outline" className="w-fit" role="listitem">
+          <Badge variant="outline" className="w-fit text-xs sm:text-sm" role="listitem">
             {pack.week_key}
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="flex-1">
-        <CardDescription className="line-clamp-3 mb-4">
+      <CardContent className="flex-1 pt-0">
+        <CardDescription className="line-clamp-3 mb-4 text-sm leading-relaxed sm:text-base">
           {pack.summary}
         </CardDescription>
         {pack.trend_keywords && pack.trend_keywords.length > 0 && (
@@ -72,7 +72,7 @@ export function TrendPackCard({ pack }: TrendPackCardProps) {
             )}
           </div>
         )}
-        <Button asChild variant="outline" className="w-full" aria-label={`${pack.title} 패키지 자세히 보기`}>
+        <Button asChild variant="outline" className="w-full min-h-[44px]" aria-label={`${pack.title} 패키지 자세히 보기`}>
           <Link href={`/packs/${pack.id}`}>자세히 보기</Link>
         </Button>
       </CardContent>

@@ -50,8 +50,8 @@ export function Header() {
           <span className="text-xl font-bold">TrendScrape Prompt</span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex md:items-center md:gap-6">
+        {/* Desktop & Tablet Navigation */}
+        <nav className="hidden sm:flex sm:items-center sm:gap-4 md:gap-6">
           {visibleNavItems.map((item) => (
             <Link
               key={item.href}
@@ -73,10 +73,15 @@ export function Header() {
           <ThemeSwitcher />
           <Profile />
           
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button - 최소 터치 영역 44x44px */}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                className="min-h-[44px] min-w-[44px]"
+                aria-label="메뉴 열기"
+              >
                 <LuMenu className="h-5 w-5" />
                 <span className="sr-only">메뉴 열기</span>
               </Button>
@@ -92,7 +97,7 @@ export function Header() {
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
                     className={cn(
-                      "text-lg font-medium transition-colors hover:text-primary",
+                      "min-h-[44px] flex items-center text-lg font-medium transition-colors hover:text-primary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-md px-2",
                       isActive(item.href)
                         ? "text-foreground"
                         : "text-muted-foreground"
