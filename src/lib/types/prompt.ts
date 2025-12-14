@@ -1,4 +1,4 @@
-import type { Json } from "@/../database.types";
+import type { Json } from "@/lib/types/database";
 
 /**
  * 프롬프트 변수 가이드 타입

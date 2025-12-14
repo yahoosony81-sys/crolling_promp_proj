@@ -375,11 +375,64 @@
   - [x] 트렌드 키워드 추출 함수
 
 ## 타입 정의
-- [ ] `types/database.ts` 데이터베이스 타입 생성
-  - [ ] Supabase 타입 자동 생성 스크립트 실행
+- [x] `types/database.ts` 데이터베이스 타입 생성
+  - [x] Supabase 타입 자동 생성 스크립트 실행
+  ---
+  - [x] `types/database.ts` 데이터베이스 타입 생성 구현 세부 작업 (plan 모드 build)
+    - [x] `database.types.ts`를 `src/lib/types/database.ts`로 이동
+    - [x] 모든 파일의 import 경로를 `@/../database.types`에서 `@/lib/types/database`로 변경 (33개 파일)
+    - [x] `src/lib/supabase/server.ts`에 Database 타입 적용 (`createServerClient<Database>()`)
+    - [x] `src/lib/supabase/client.ts`에 Database 타입 적용 (`createBrowserClient<Database>()`)
+    - [x] `src/lib/supabase/client-hook.ts`에 Database 타입 적용 (`createSupabaseClient<Database>()`)
+    - [x] `src/lib/supabase/server-admin.ts`에 Database 타입 적용 (`createSupabaseClient<Database>()`)
+    - [x] `package.json`의 `gen:types` 스크립트 개선 (환경 변수 사용, 출력 경로를 `src/lib/types/database.ts`로 변경)
+    - [x] 기존 `database.types.ts` 파일 삭제
+    - [x] 모든 테이블 타입 포함 여부 검증 (prompt_templates, trend_packs, scraped_items, pack_prompts, subscriptions, prompt_usages)
+    - [x] `docs/TYPES.md` 타입 사용 가이드 문서 생성
 - [x] `types/prompt.ts` 프롬프트 관련 타입
-- [ ] `types/trend.ts` 트렌드 관련 타입
-- [ ] `types/subscription.ts` 구독 관련 타입
+- [x] `types/trend.ts` 트렌드 관련 타입
+  ---
+  - [x] `types/trend.ts` 트렌드 관련 타입 구현 세부 작업 (plan 모드 build)
+    - [x] `src/lib/types/trend.ts` 트렌드 관련 타입 파일 생성
+    - [x] TrendPack, TrendPackInsert, TrendPackUpdate 타입 정의 (Database에서 재export)
+    - [x] ScrapedItem, ScrapedItemInsert, ScrapedItemUpdate 타입 정의 (Database에서 재export)
+    - [x] TrendCategory 타입 정의 ("product" | "real_estate" | "stock" | "blog" | "shorts" | "reels")
+    - [x] TrendPackStatus 타입 정의 ("draft" | "published" | "archived")
+    - [x] WeekKey 타입 정의
+    - [x] TrendCategoryInfo 인터페이스 및 TREND_CATEGORIES 상수 정의
+    - [x] TrendPackSummary, TrendPackDetail 인터페이스 정의
+    - [x] TrendKeywordStats, WeekTrendStats 인터페이스 정의
+    - [x] TrendPackFilter 인터페이스 및 TrendPackSortOption 타입 정의
+    - [x] `src/app/trends/trends-content.tsx`에서 새로운 타입 사용하도록 업데이트
+    - [x] `src/app/trends/page.tsx`에서 새로운 타입 사용하도록 업데이트
+    - [x] `src/app/api/trends/route.ts`에서 새로운 타입 사용하도록 업데이트
+    - [x] `src/app/api/trends/[id]/route.ts`에서 새로운 타입 사용하도록 업데이트
+    - [x] `src/app/api/trends/[id]/scraped-items/route.ts`에서 새로운 타입 사용하도록 업데이트
+    - [x] `src/app/packs/[id]/page.tsx`에서 새로운 타입 사용하도록 업데이트
+    - [x] `src/app/packs/[id]/pack-detail-content.tsx`에서 새로운 타입 사용하도록 업데이트
+    - [x] `src/app/page.tsx`에서 새로운 타입 사용하도록 업데이트
+    - [x] `src/components/landing/latest-trends-section.tsx`에서 새로운 타입 사용하도록 업데이트
+    - [x] `src/components/trends/trend-pack-card.tsx`에서 새로운 타입 사용하도록 업데이트
+    - [x] `src/components/trends/trend-pack-list.tsx`에서 새로운 타입 사용하도록 업데이트
+    - [x] `src/components/trends/week-summary-section.tsx`에서 새로운 타입 사용하도록 업데이트
+    - [x] `src/components/packs/trend-description-section.tsx`에서 새로운 타입 사용하도록 업데이트
+    - [x] `src/components/packs/scraped-items-section.tsx`에서 새로운 타입 사용하도록 업데이트
+    - [x] `src/components/packs/scraped-item-card.tsx`에서 새로운 타입 사용하도록 업데이트
+- [x] `types/subscription.ts` 구독 관련 타입
+  ---
+  - [x] `types/subscription.ts` 구독 관련 타입 구현 세부 작업 (plan 모드 build)
+    - [x] `src/lib/types/subscription.ts` 구독 관련 타입 파일 생성
+    - [x] Subscription, SubscriptionInsert, SubscriptionUpdate 타입 정의 (Database에서 재export)
+    - [x] SubscriptionStatus 타입 정의 ("active" | "past_due" | "canceled")
+    - [x] SubscriptionPlanName 타입 정의 ("monthly_9900")
+    - [x] SubscriptionPlan 인터페이스 및 SUBSCRIPTION_PLANS 상수 정의
+    - [x] SubscriptionStatusLabel, SubscriptionStatusVariant 타입 정의
+    - [x] SubscriptionPeriod, SubscriptionStats 인터페이스 정의
+    - [x] `src/lib/utils/subscription.ts`에서 새로운 타입 사용하도록 업데이트
+    - [x] `src/components/account/subscription-status.tsx`에서 새로운 타입 사용하도록 업데이트
+    - [x] `src/components/account/payment-info.tsx`에서 새로운 타입 사용하도록 업데이트
+    - [x] `src/components/account/cancel-subscription.tsx`에서 새로운 타입 사용하도록 업데이트
+    - [x] `src/app/api/subscriptions/payment-history/route.ts`에서 새로운 타입 사용하도록 업데이트
 
 ## 스타일링 및 UI/UX
 - [ ] 테마 설정

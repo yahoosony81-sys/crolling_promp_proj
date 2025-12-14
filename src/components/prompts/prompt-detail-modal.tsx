@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { CopyButton } from "./copy-button";
-import type { Database } from "@/../database.types";
+import type { Database } from "@/lib/types/database";
 import {
   parseVariableGuide,
   parseExampleInputs,

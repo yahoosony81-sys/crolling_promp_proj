@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import { PackPromptCard } from "./pack-prompt-card";
 import { PurposeSelector, type PurposeValue } from "./purpose-selector";
-import type { Database } from "@/../database.types";
+import type { Database } from "@/lib/types/database";
 
 type PromptTemplate = Database["public"]["Tables"]["prompt_templates"]["Row"];
 type PackPrompt = Database["public"]["Tables"]["pack_prompts"]["Row"];

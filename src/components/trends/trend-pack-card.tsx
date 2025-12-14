@@ -8,9 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { Database } from "@/../database.types";
-
-type TrendPack = Database["public"]["Tables"]["trend_packs"]["Row"];
+import type { TrendPack } from "@/lib/types/trend";
 
 interface TrendPackCardProps {
   pack: TrendPack;

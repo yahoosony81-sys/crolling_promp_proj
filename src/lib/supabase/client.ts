@@ -3,6 +3,7 @@
 import { createBrowserClient } from "@supabase/ssr";
 import { useSession } from "@clerk/nextjs";
 import { useMemo } from "react";
+import type { Database } from "@/lib/types/database";
 
 /**
  * Clerk와 Supabase를 통합한 클라이언트 사이드 Supabase 클라이언트 생성
@@ -32,7 +33,7 @@ export function createClient() {
   const { session } = useSession();
 
   return useMemo(() => {
-    return createBrowserClient(
+    return createBrowserClient<Database>(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {

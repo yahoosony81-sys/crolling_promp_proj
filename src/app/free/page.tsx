@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import type { Database } from "@/../database.types";
+import type { Database } from "@/lib/types/database";
 import { FreePromptsContent } from "./free-prompts-content";
 
 export const dynamic = "force-dynamic";

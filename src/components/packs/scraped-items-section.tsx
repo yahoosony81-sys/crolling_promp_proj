@@ -1,8 +1,6 @@
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import { ScrapedItemCard } from "./scraped-item-card";
-import type { Database } from "@/../database.types";
-
-type ScrapedItem = Database["public"]["Tables"]["scraped_items"]["Row"];
+import type { ScrapedItem } from "@/lib/types/trend";
 
 interface ScrapedItemsSectionProps {
   items: ScrapedItem[];

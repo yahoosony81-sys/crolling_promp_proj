@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import type { Database } from "@/../database.types";
+import type { Database } from "@/lib/types/database";
 
 type PromptTemplate = Database["public"]["Tables"]["prompt_templates"]["Row"];
 

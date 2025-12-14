@@ -9,7 +9,7 @@ import {
   EmptyTitle,
   EmptyDescription,
 } from "@/components/ui/empty";
-import type { Database } from "@/../database.types";
+import type { Database } from "@/lib/types/database";
 
 type PromptTemplate = Database["public"]["Tables"]["prompt_templates"]["Row"];
 

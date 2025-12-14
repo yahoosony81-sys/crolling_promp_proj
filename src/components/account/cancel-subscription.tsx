@@ -14,13 +14,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import type { Database } from "@/../database.types";
+import type { Subscription } from "@/lib/types/subscription";
 import { formatDate } from "@/lib/utils/date";
 import { isSubscriptionActive } from "@/lib/utils/subscription";
 import { LuLoader2, LuXCircle } from "react-icons/lu";
 import { toast } from "sonner";
-
-type Subscription = Database["public"]["Tables"]["subscriptions"]["Row"];
 
 interface CancelSubscriptionProps {
   subscription: Subscription | null;

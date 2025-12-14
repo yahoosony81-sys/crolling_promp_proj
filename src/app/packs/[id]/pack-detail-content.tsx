@@ -4,11 +4,10 @@ import { useState } from "react";
 import { TrendDescriptionSection } from "@/components/packs/trend-description-section";
 import { ScrapedItemsSection } from "@/components/packs/scraped-items-section";
 import { PackPromptsSection } from "@/components/packs/pack-prompts-section";
-import type { Database } from "@/../database.types";
+import type { TrendPack, ScrapedItem } from "@/lib/types/trend";
+import type { Database } from "@/lib/types/database";
 import type { PurposeValue } from "@/components/packs/purpose-selector";
 
-type TrendPack = Database["public"]["Tables"]["trend_packs"]["Row"];
-type ScrapedItem = Database["public"]["Tables"]["scraped_items"]["Row"];
 type PromptTemplate = Database["public"]["Tables"]["prompt_templates"]["Row"];
 type PackPrompt = Database["public"]["Tables"]["pack_prompts"]["Row"];
 

@@ -2,11 +2,9 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@/lib/supabase/server";
 import { checkSubscription } from "@/lib/utils/subscription";
-import type { Database } from "@/../database.types";
+import type { TrendPack } from "@/lib/types/trend";
 
 export const dynamic = "force-dynamic";
-
-type TrendPack = Database["public"]["Tables"]["trend_packs"]["Row"];
 
 // 유효한 카테고리 값 (trends용)
 const VALID_CATEGORIES = [

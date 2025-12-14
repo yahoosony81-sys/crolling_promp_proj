@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/prompts/copy-button";
 import { PromptDetailModal } from "@/components/prompts/prompt-detail-modal";
-import type { Database } from "@/../database.types";
+import type { Database } from "@/lib/types/database";
 
 type PromptTemplate = Database["public"]["Tables"]["prompt_templates"]["Row"];
 type PackPrompt = Database["public"]["Tables"]["pack_prompts"]["Row"];

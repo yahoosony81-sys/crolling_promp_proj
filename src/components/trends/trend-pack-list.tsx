@@ -9,9 +9,7 @@ import {
   EmptyTitle,
   EmptyDescription,
 } from "@/components/ui/empty";
-import type { Database } from "@/../database.types";
-
-type TrendPack = Database["public"]["Tables"]["trend_packs"]["Row"];
+import type { TrendPack } from "@/lib/types/trend";
 
 interface TrendPackListProps {
   packs: TrendPack[];

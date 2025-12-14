@@ -9,9 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { Database } from "@/../database.types";
-
-type ScrapedItem = Database["public"]["Tables"]["scraped_items"]["Row"];
+import type { ScrapedItem } from "@/lib/types/trend";
 
 const sourceTypeLabels: Record<string, string> = {
   news: "뉴스",

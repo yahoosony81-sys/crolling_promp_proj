@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import type { Database } from "@/../database.types";
+import type { TrendPack } from "@/lib/types/trend";
+import type { Database } from "@/lib/types/database";
 import { HeroSection } from "@/components/landing/hero-section";
 import { DifferentiatorsSection } from "@/components/landing/differentiators-section";
 import { LatestTrendsSection } from "@/components/landing/latest-trends-section";
@@ -13,7 +14,6 @@ export const metadata: Metadata = {
     "매주 트렌드를 반영해 새롭게 업데이트되는 실행형 프롬프트를 제공합니다. 자동 크롤링·스크래핑 데이터와 목적별 맞춤 프롬프트로 빠르게 성과를 만들어보세요.",
 };
 
-type TrendPack = Database["public"]["Tables"]["trend_packs"]["Row"];
 type PromptTemplate = Database["public"]["Tables"]["prompt_templates"]["Row"];
 
 async function getLatestTrendPacks() {

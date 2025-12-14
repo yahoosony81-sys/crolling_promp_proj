@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@/lib/supabase/server";
-import type { Database } from "@/../database.types";
+import type { Subscription } from "@/lib/types/subscription";
 
 export const dynamic = "force-dynamic";
-
-type Subscription = Database["public"]["Tables"]["subscriptions"]["Row"];
 
 /**
  * 결제 내역 조회 API

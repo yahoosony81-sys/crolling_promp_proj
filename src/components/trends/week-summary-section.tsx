@@ -15,9 +15,7 @@ import {
   EmptyDescription,
 } from "@/components/ui/empty";
 import { getCurrentWeekKey, getWeekKeyFromDate } from "@/lib/utils/trend";
-import type { Database } from "@/../database.types";
-
-type TrendPack = Database["public"]["Tables"]["trend_packs"]["Row"];
+import type { TrendPack } from "@/lib/types/trend";
 
 interface WeekSummarySectionProps {
   trendPacks: TrendPack[];

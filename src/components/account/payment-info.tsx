@@ -1,9 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Database } from "@/../database.types";
+import type { Subscription } from "@/lib/types/subscription";
 import { formatDate } from "@/lib/utils/date";
 import { isSubscriptionActive } from "@/lib/utils/subscription";
-
-type Subscription = Database["public"]["Tables"]["subscriptions"]["Row"];
 
 interface PaymentInfoProps {
   subscription: Subscription | null;

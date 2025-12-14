@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import type { Database } from "@/../database.types";
+import type { Database } from "@/lib/types/database";
 
 export const dynamic = "force-dynamic";
 

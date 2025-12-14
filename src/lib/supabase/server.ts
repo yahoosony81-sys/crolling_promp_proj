@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { auth } from "@clerk/nextjs/server";
+import type { Database } from "@/lib/types/database";
 
 /**
  * Clerk와 Supabase를 통합한 서버 사이드 Supabase 클라이언트 생성
@@ -26,7 +27,7 @@ export async function createClient() {
   const { getToken } = await auth();
   const clerkToken = await getToken();
 
-  return createServerClient(
+  return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {

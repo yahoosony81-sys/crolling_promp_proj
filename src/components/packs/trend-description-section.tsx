@@ -1,7 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import type { Database } from "@/../database.types";
-
-type TrendPack = Database["public"]["Tables"]["trend_packs"]["Row"];
+import type { TrendPack } from "@/lib/types/trend";
 
 const categoryLabels: Record<string, string> = {
   product: "상품",

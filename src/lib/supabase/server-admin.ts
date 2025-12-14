@@ -8,6 +8,7 @@
  */
 
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/lib/types/database";
 
 /**
  * 서버 사이드 관리자용 Supabase 클라이언트 생성
@@ -23,7 +24,7 @@ export function createAdminClient() {
     );
   }
 
-  return createSupabaseClient(supabaseUrl, supabaseServiceKey, {
+  return createSupabaseClient<Database>(supabaseUrl, supabaseServiceKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,

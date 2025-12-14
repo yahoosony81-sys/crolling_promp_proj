@@ -14,9 +14,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import type { Database } from "@/../database.types";
-
-type TrendPack = Database["public"]["Tables"]["trend_packs"]["Row"];
+import type { TrendPack } from "@/lib/types/trend";
 
 interface TrendsContentProps {
   weekPacks: TrendPack[];

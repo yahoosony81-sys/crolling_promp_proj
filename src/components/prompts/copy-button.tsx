@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { LuCopy, LuCheck } from "react-icons/lu";
 import { toast } from "sonner";
-import type { Database } from "@/../database.types";
+import type { Database } from "@/lib/types/database";
 import { createPromptWithVariables } from "@/lib/utils/prompt";
 
 type PromptTemplate = Database["public"]["Tables"]["prompt_templates"]["Row"];

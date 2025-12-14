@@ -7,7 +7,7 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "gen:types": "pnpm dlx supabase gen types typescript --project-id \"oidecqqxjuuajcgxcduc\" --schema public > database.types.ts"
+    "gen:types": "pnpm dlx supabase gen types typescript --project-id \"${NEXT_PUBLIC_SUPABASE_PROJECT_ID:-oidecqqxjuuajcgxcduc}\" --schema public > src/lib/types/database.ts"
   },
   "dependencies": {
     "@clerk/localizations": "^3.30.1",

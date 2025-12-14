@@ -1,7 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
-import type { Database } from "@/../database.types";
-
-type Subscription = Database["public"]["Tables"]["subscriptions"]["Row"];
+import type {
+  Subscription,
+  SubscriptionInsert,
+  SubscriptionStatus,
+  SubscriptionPlanName,
+} from "@/lib/types/subscription";
 
 /**
  * 구독 관련 유틸리티 함수
@@ -166,9 +169,9 @@ export async function createOrUpdateSubscriptionFromWebhook(
   const periodEnd = new Date(periodStart);
   periodEnd.setMonth(periodEnd.getMonth() + 1);
 
-  const subscriptionData = {
+  const subscriptionData: SubscriptionInsert = {
     user_id: userId,
-    status: "active" as const,
+    status: "active",
     plan_name: "monthly_9900",
     price_krw: amount,
     current_period_start: periodStart.toISOString(),
@@ -321,7 +324,7 @@ export async function expireSubscriptions(): Promise<Subscription[]> {
 
   // 각 구독을 상태에 따라 업데이트
   for (const subscription of expiredSubscriptions) {
-    let newStatus: "canceled" | "past_due";
+    let newStatus: SubscriptionStatus;
 
     if (subscription.cancel_at_period_end) {
       // 취소 예정이었던 경우 완전히 취소 처리
@@ -441,13 +444,13 @@ export async function renewSubscription(
  * 구독 상태 업데이트 함수
  * 
  * @param subscriptionId - 구독 ID
- * @param status - 새 상태 ("active" | "past_due" | "canceled")
+ * @param status - 새 상태 (SubscriptionStatus)
  * @param additionalData - 추가 업데이트할 데이터 (선택사항)
  * @returns 업데이트된 구독 정보 또는 null
  */
 export async function updateSubscriptionStatus(
   subscriptionId: string,
-  status: "active" | "past_due" | "canceled",
+  status: SubscriptionStatus,
   additionalData?: Partial<Subscription>
 ): Promise<Subscription | null> {
   const supabase = await createClient();

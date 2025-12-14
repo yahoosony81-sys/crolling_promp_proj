@@ -1,4 +1,4 @@
-import type { Json } from "@/../database.types";
+import type { Json } from "@/lib/types/database";
 import type {
   VariableGuide,
   PromptInputs,

@@ -2,11 +2,9 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@/lib/supabase/server";
 import { checkSubscription } from "@/lib/utils/subscription";
-import type { Database } from "@/../database.types";
+import type { TrendPack } from "@/lib/types/trend";
 
 export const dynamic = "force-dynamic";
-
-type TrendPack = Database["public"]["Tables"]["trend_packs"]["Row"];
 
 // UUID 형식 검증 정규식
 const UUID_REGEX =

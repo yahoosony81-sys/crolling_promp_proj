@@ -7,12 +7,11 @@ import { checkSubscription } from "@/lib/utils/subscription";
 import { SubscriptionGate } from "@/components/trends/subscription-gate";
 import { PackDetailContent } from "./pack-detail-content";
 import { PackDetailSkeleton } from "./loading";
-import type { Database } from "@/../database.types";
+import type { TrendPack, ScrapedItem } from "@/lib/types/trend";
+import type { Database } from "@/lib/types/database";
 
 export const dynamic = "force-dynamic";
 
-type TrendPack = Database["public"]["Tables"]["trend_packs"]["Row"];
-type ScrapedItem = Database["public"]["Tables"]["scraped_items"]["Row"];
 type PromptTemplate = Database["public"]["Tables"]["prompt_templates"]["Row"];
 type PackPrompt = Database["public"]["Tables"]["pack_prompts"]["Row"];
 

@@ -2,15 +2,13 @@ import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { Database } from "@/../database.types";
+import type { Subscription } from "@/lib/types/subscription";
 import {
   getSubscriptionStatusLabel,
   getSubscriptionStatusVariant,
   isSubscriptionActive,
 } from "@/lib/utils/subscription";
 import { formatSubscriptionPeriod, formatDate } from "@/lib/utils/date";
-
-type Subscription = Database["public"]["Tables"]["subscriptions"]["Row"];
 
 interface SubscriptionStatusProps {
   subscription: Subscription | null;

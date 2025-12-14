@@ -5,7 +5,7 @@ import { CategoryFilter, type CategoryFilterValue } from "@/components/prompts/c
 import { UpgradeCTA } from "@/components/prompts/upgrade-cta";
 import { PromptList } from "@/components/prompts/prompt-list";
 import { ExamplePromptSection } from "@/components/prompts/example-prompt-section";
-import type { Database } from "@/../database.types";
+import type { Database } from "@/lib/types/database";
 
 type PromptTemplate = Database["public"]["Tables"]["prompt_templates"]["Row"];
 
