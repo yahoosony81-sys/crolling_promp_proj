@@ -545,10 +545,26 @@
   - [ ] 성능 모니터링 설정
 
 ## 보안
-- [ ] RLS 정책 검토 및 테스트
-- [ ] API 라우트 인증 미들웨어
-- [ ] 입력 데이터 검증
-- [ ] XSS/CSRF 방지
+- [x] RLS 정책 검토 및 테스트
+- [x] API 라우트 인증 미들웨어
+- [x] 입력 데이터 검증
+- [x] XSS/CSRF 방지
+  ---
+  - [x] 보안 강화 구현 세부 작업 (plan 모드 build)
+    - [x] `docs/SECURITY.md` 보안 가이드 문서 생성 (RLS 정책 설명, 인증 및 권한 관리, 입력 데이터 검증, XSS/CSRF 방지, 보안 모범 사례)
+    - [x] `scripts/test-rls-policies.ts` RLS 정책 테스트 스크립트 생성 (비인증/인증 사용자 시나리오 테스트)
+    - [x] `supabase/migrations/20251214000000_improve_rls_with_subscription.sql` RLS 정책 개선 마이그레이션 생성 (구독 체크 함수 추가, 유료 콘텐츠 접근 시 구독 체크)
+    - [x] `src/lib/middleware/auth.ts` 인증 미들웨어 유틸리티 생성 (requireAuth, requireSubscription, requireInternalApiKey, optionalAuth 함수)
+    - [x] `src/lib/utils/api-error.ts` API 에러 처리 표준화 (표준화된 에러 응답 형식, HTTP 상태 코드 매핑, 에러 로깅 유틸리티, withErrorHandler 래퍼)
+    - [x] 주요 API 라우트에 인증 미들웨어 적용 (`/api/trends/*`, `/api/prompts/[id]`, `/api/subscriptions/*`, `/api/crawl/run`)
+    - [x] `src/lib/utils/validation.ts` 입력 검증 유틸리티 생성 (UUID, 이메일, URL, 문자열 길이, 숫자 범위, 카테고리 검증 함수)
+    - [x] `src/lib/schemas/prompts.ts` 프롬프트 관련 Zod 스키마 정의
+    - [x] `src/lib/schemas/trends.ts` 트렌드 관련 Zod 스키마 정의
+    - [x] `src/lib/schemas/subscriptions.ts` 구독 관련 Zod 스키마 정의
+    - [x] 주요 API 라우트에 입력 검증 적용 (`/api/prompts/usage`, `/api/prompts`, `/api/trends/[id]/scraped-items`)
+    - [x] `src/lib/utils/sanitize.ts` XSS 방지 유틸리티 생성 (HTML 이스케이프, HTML 태그 제거, JavaScript 코드 제거, URL sanitization)
+    - [x] `src/middleware.ts` CORS 정책 설정 추가
+    - [x] `next.config.ts` 보안 헤더 설정 추가 (Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Referrer-Policy 등)
 
 ## 성능 최적화
 - [ ] 데이터베이스 쿼리 최적화

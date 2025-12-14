@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { auth, clerkClient } from "@clerk/nextjs/server";
-import { createClient } from "@/lib/supabase/server";
+import { clerkClient } from "@clerk/nextjs/server";
+import { requireAuth } from "@/lib/middleware/auth";
 import { getUserSubscription } from "@/lib/utils/subscription";
+import { withErrorHandler, badRequest, notFound, internalError, conflict } from "@/lib/utils/api-error";
 import type { CreateCheckoutSessionResponse } from "@/lib/types/payment";
 
 export const dynamic = "force-dynamic";
@@ -22,99 +23,65 @@ export const dynamic = "force-dynamic";
  * 8. 빌링키로 첫 결제 실행
  * 9. 웹훅으로 결제 확인 및 구독 활성화
  */
-export async function POST(request: Request) {
-  try {
-    // Clerk 인증 확인
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json(
-        { error: "인증이 필요합니다" },
-        { status: 401 }
-      );
+async function POSTHandler(request: Request) {
+  // 인증 확인
+  const { userId } = await requireAuth();
+
+  // 이미 구독 중인지 확인
+  const existingSubscription = await getUserSubscription(userId);
+  if (existingSubscription) {
+    const isActive =
+      existingSubscription.status === "active" &&
+      new Date(existingSubscription.current_period_end) > new Date();
+
+    if (isActive) {
+      return conflict("이미 활성 구독이 있습니다");
     }
-
-    // 이미 구독 중인지 확인
-    const existingSubscription = await getUserSubscription(userId);
-    if (existingSubscription) {
-      const isActive =
-        existingSubscription.status === "active" &&
-        new Date(existingSubscription.current_period_end) > new Date();
-
-      if (isActive) {
-        return NextResponse.json(
-          { error: "이미 활성 구독이 있습니다" },
-          { status: 400 }
-        );
-      }
-    }
-
-    // Clerk에서 사용자 정보 조회
-    const client = await clerkClient();
-    const user = await client.users.getUser(userId);
-    
-    if (!user) {
-      return NextResponse.json(
-        { error: "사용자 정보를 찾을 수 없습니다" },
-        { status: 404 }
-      );
-    }
-
-    // 환경 변수 확인
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    const clientKey = process.env.NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY;
-    
-    if (!clientKey) {
-      console.error("NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY 환경 변수가 설정되지 않았습니다");
-      return NextResponse.json(
-        { error: "결제 설정이 완료되지 않았습니다" },
-        { status: 500 }
-      );
-    }
-
-    // 결제 세션 정보 생성
-    // customerKey는 Clerk user ID를 사용
-    const customerKey = userId;
-    const successUrl = `${appUrl}/checkout/success`;
-    const failUrl = `${appUrl}/checkout/cancel`;
-
-    const response: CreateCheckoutSessionResponse = {
-      success: true,
-      customerKey,
-      successUrl,
-      failUrl,
-    };
-
-    return NextResponse.json(response);
-  } catch (error) {
-    console.error("Error in subscription create API:", error);
-    return NextResponse.json(
-      { error: "서버 오류가 발생했습니다" },
-      { status: 500 }
-    );
   }
+
+  // Clerk에서 사용자 정보 조회
+  const client = await clerkClient();
+  const user = await client.users.getUser(userId);
+  
+  if (!user) {
+    return notFound("사용자 정보를 찾을 수 없습니다");
+  }
+
+  // 환경 변수 확인
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const clientKey = process.env.NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY;
+  
+  if (!clientKey) {
+    console.error("NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY 환경 변수가 설정되지 않았습니다");
+    return internalError("결제 설정이 완료되지 않았습니다");
+  }
+
+  // 결제 세션 정보 생성
+  // customerKey는 Clerk user ID를 사용
+  const customerKey = userId;
+  const successUrl = `${appUrl}/checkout/success`;
+  const failUrl = `${appUrl}/checkout/cancel`;
+
+  const response: CreateCheckoutSessionResponse = {
+    success: true,
+    customerKey,
+    successUrl,
+    failUrl,
+  };
+
+  return NextResponse.json(response);
 }
 
 /**
  * 구독 상태 조회 (GET)
  */
-export async function GET() {
-  try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json(
-        { error: "인증이 필요합니다" },
-        { status: 401 }
-      );
-    }
+async function GETHandler() {
+  const { userId } = await requireAuth();
 
-    const subscription = await getUserSubscription(userId);
-    return NextResponse.json({ subscription });
-  } catch (error) {
-    console.error("Error in subscription get API:", error);
-    return NextResponse.json(
-      { error: "서버 오류가 발생했습니다" },
-      { status: 500 }
-    );
-  }
+  const subscription = await getUserSubscription(userId);
+  return NextResponse.json({ subscription });
 }
+
+export const POST = withErrorHandler(POSTHandler);
+export const GET = withErrorHandler(GETHandler);
 

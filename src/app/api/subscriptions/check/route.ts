@@ -6,8 +6,9 @@
  */
 
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { requireAuth } from "@/lib/middleware/auth";
 import { checkSubscription } from "@/lib/utils/subscription";
+import { withErrorHandler, internalError } from "@/lib/utils/api-error";
 
 export const dynamic = "force-dynamic";
 
@@ -15,32 +16,16 @@ export const dynamic = "force-dynamic";
  * GET /api/subscriptions/check
  * 구독 상태 확인
  */
-export async function GET() {
-  try {
-    const { userId } = await auth();
+async function GETHandler() {
+  const { userId } = await requireAuth();
 
-    if (!userId) {
-      return NextResponse.json(
-        { error: "인증이 필요합니다" },
-        { status: 401 }
-      );
-    }
+  const hasSubscription = await checkSubscription(userId);
 
-    const hasSubscription = await checkSubscription(userId);
-
-    return NextResponse.json({
-      success: true,
-      hasSubscription,
-    });
-  } catch (error) {
-    console.error("Error checking subscription:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : "서버 오류가 발생했습니다",
-      },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json({
+    success: true,
+    hasSubscription,
+  });
 }
+
+export const GET = withErrorHandler(GETHandler);
 

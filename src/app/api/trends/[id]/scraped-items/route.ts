@@ -1,14 +1,11 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@/lib/supabase/server";
-import { checkSubscription } from "@/lib/utils/subscription";
+import { requireSubscription } from "@/lib/middleware/auth";
+import { GetTrendParamsSchema, GetScrapedItemsQuerySchema } from "@/lib/schemas/trends";
+import { withErrorHandler, validationError, notFound, internalError } from "@/lib/utils/api-error";
 import type { ScrapedItem } from "@/lib/types/trend";
 
 export const dynamic = "force-dynamic";
-
-// UUID 형식 검증 정규식
-const UUID_REGEX =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
  * 스크랩된 아이템 목록 조회 API
@@ -23,132 +20,82 @@ const UUID_REGEX =
  *
  * 인증 및 구독: 필수
  */
-export async function GET(
+async function GETHandler(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  try {
-    // 인증 확인
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
-      );
-    }
+  // 인증 및 구독 체크
+  await requireSubscription();
 
-    // 구독 체크
-    const hasSubscription = await checkSubscription(userId);
-    if (!hasSubscription) {
-      return NextResponse.json(
-        { error: "Subscription required" },
-        { status: 403 }
-      );
-    }
-
-    const { id } = params;
-
-    // UUID 형식 검증
-    if (!id || !UUID_REGEX.test(id)) {
-      return NextResponse.json(
-        { error: "Invalid pack ID format" },
-        { status: 400 }
-      );
-    }
-
-    // 쿼리 파라미터 파싱
-    const { searchParams } = new URL(request.url);
-    const limitParam = searchParams.get("limit");
-    const offsetParam = searchParams.get("offset");
-
-    // limit 검증 및 파싱
-    const limit = limitParam
-      ? Math.min(Math.max(parseInt(limitParam, 10), 1), 100)
-      : 50;
-
-    if (limitParam && (isNaN(parseInt(limitParam, 10)) || parseInt(limitParam, 10) < 1)) {
-      return NextResponse.json(
-        { error: "limit must be a positive number" },
-        { status: 400 }
-      );
-    }
-
-    // offset 검증 및 파싱
-    const offset = offsetParam
-      ? Math.max(parseInt(offsetParam, 10), 0)
-      : 0;
-
-    if (offsetParam && (isNaN(parseInt(offsetParam, 10)) || parseInt(offsetParam, 10) < 0)) {
-      return NextResponse.json(
-        { error: "offset must be a non-negative number" },
-        { status: 400 }
-      );
-    }
-
-    // Supabase 클라이언트 생성
-    const supabase = await createClient();
-
-    // 패키지 존재 및 published 상태 확인
-    const { data: pack, error: packError } = await supabase
-      .from("trend_packs")
-      .select("id, status")
-      .eq("id", id)
-      .eq("status", "published")
-      .maybeSingle();
-
-    if (packError) {
-      console.error("Error checking pack:", packError);
-      return NextResponse.json(
-        { error: "Failed to verify pack" },
-        { status: 500 }
-      );
-    }
-
-    if (!pack) {
-      return NextResponse.json(
-        { error: "Trend pack not found or not published" },
-        { status: 404 }
-      );
-    }
-
-    // 스크랩 아이템 조회
-    const { data, error, count } = await supabase
-      .from("scraped_items")
-      .select("*", { count: "exact" })
-      .eq("pack_id", id)
-      .order("scraped_at", { ascending: false })
-      .range(offset, offset + limit - 1);
-
-    if (error) {
-      console.error("Error fetching scraped items:", error);
-      return NextResponse.json(
-        { error: "Failed to fetch scraped items" },
-        { status: 500 }
-      );
-    }
-
-    const total = count || 0;
-    const totalPages = Math.ceil(total / limit);
-    const currentPage = Math.floor(offset / limit) + 1;
-
-    return NextResponse.json({
-      data: (data || []) as ScrapedItem[],
-      pagination: {
-        page: currentPage,
-        limit,
-        offset,
-        total,
-        totalPages,
-        hasNextPage: offset + limit < total,
-        hasPreviousPage: offset > 0,
-      },
-    });
-  } catch (error) {
-    console.error("Error in scraped items API:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+  // 경로 파라미터 검증
+  const paramsValidation = GetTrendParamsSchema.safeParse(params);
+  if (!paramsValidation.success) {
+    return validationError("Invalid path parameters", paramsValidation.error.errors);
   }
+
+  const { id } = paramsValidation.data;
+
+  // 쿼리 파라미터 파싱 및 검증
+  const { searchParams } = new URL(request.url);
+  const queryParams = Object.fromEntries(searchParams.entries());
+  
+  const queryValidation = GetScrapedItemsQuerySchema.safeParse(queryParams);
+  if (!queryValidation.success) {
+    return validationError("Invalid query parameters", queryValidation.error.errors);
+  }
+
+  const { limit, offset } = queryValidation.data;
+
+  // Supabase 클라이언트 생성
+  const supabase = await createClient();
+
+  // 패키지 존재 및 published 상태 확인
+  const { data: pack, error: packError } = await supabase
+    .from("trend_packs")
+    .select("id, status")
+    .eq("id", id)
+    .eq("status", "published")
+    .maybeSingle();
+
+  if (packError) {
+    console.error("Error checking pack:", packError);
+    return internalError("Failed to verify pack");
+  }
+
+  if (!pack) {
+    return notFound("Trend pack not found or not published");
+  }
+
+  // 스크랩 아이템 조회
+  const { data, error, count } = await supabase
+    .from("scraped_items")
+    .select("*", { count: "exact" })
+    .eq("pack_id", id)
+    .order("scraped_at", { ascending: false })
+    .range(offset, offset + limit - 1);
+
+  if (error) {
+    console.error("Error fetching scraped items:", error);
+    return internalError("Failed to fetch scraped items");
+  }
+
+  const total = count || 0;
+  const totalPages = Math.ceil(total / limit);
+  const currentPage = Math.floor(offset / limit) + 1;
+
+  return NextResponse.json({
+    data: (data || []) as ScrapedItem[],
+    pagination: {
+      page: currentPage,
+      limit,
+      offset,
+      total,
+      totalPages,
+      hasNextPage: offset + limit < total,
+      hasPreviousPage: offset > 0,
+    },
+  });
 }
+
+export const GET = withErrorHandler(GETHandler);
 

@@ -30,7 +30,36 @@ export default clerkMiddleware(async (auth, request: NextRequest) => {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  return NextResponse.next();
+  // 응답 생성
+  const response = NextResponse.next();
+
+  // 보안 헤더 추가
+  // CORS 정책 설정
+  const origin = request.headers.get("origin");
+  const allowedOrigins = [
+    process.env.NEXT_PUBLIC_APP_URL,
+    "http://localhost:3000",
+    "https://localhost:3000",
+  ].filter(Boolean) as string[];
+
+  if (origin && allowedOrigins.includes(origin)) {
+    response.headers.set("Access-Control-Allow-Origin", origin);
+    response.headers.set("Access-Control-Allow-Credentials", "true");
+    response.headers.set(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+    );
+    response.headers.set(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization"
+    );
+  }
+
+  // SameSite 쿠키 설정은 Next.js가 자동으로 처리하지만,
+  // 명시적으로 설정할 수도 있습니다.
+  // response.headers.set("Set-Cookie", "SameSite=Strict");
+
+  return response;
 });
 
 export const config = {

@@ -51,17 +51,14 @@ type ValidCategory = (typeof VALID_CATEGORIES)[number];
  * POST /api/crawl/run
  * 크롤링 실행
  */
-export async function POST(request: Request) {
+import { requireInternalApiKey } from "@/lib/middleware/auth";
+import { withErrorHandler } from "@/lib/utils/api-error";
+
+async function POSTHandler(request: Request) {
   const startTime = Date.now();
 
-  try {
-    // 인증 체크 (내부 API 키 또는 관리자 권한)
-    const authHeader = request.headers.get("authorization");
-    const apiKey = process.env.INTERNAL_API_KEY;
-
-    if (apiKey && authHeader !== `Bearer ${apiKey}`) {
-      return NextResponse.json({ error: "인증이 필요합니다" }, { status: 401 });
-    }
+  // 내부 API 키 확인
+  requireInternalApiKey(request);
 
     // 요청 본문 파싱 (선택적)
     let categories: ValidCategory[] = [...VALID_CATEGORIES];
@@ -219,15 +216,7 @@ export async function POST(request: Request) {
         packsCreated: Object.values(results).filter((r) => r.packId !== null).length,
       },
     });
-  } catch (error) {
-    console.error("Error in crawl run API:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : "서버 오류가 발생했습니다",
-      },
-      { status: 500 }
-    );
-  }
 }
+
+export const POST = withErrorHandler(POSTHandler);
 
