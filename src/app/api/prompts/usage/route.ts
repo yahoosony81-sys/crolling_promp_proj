@@ -12,7 +12,7 @@ async function POSTHandler(request: Request) {
   const validationResult = CreatePromptUsageSchema.safeParse(body);
 
   if (!validationResult.success) {
-    return validationError("Invalid request body", validationResult.error.errors);
+    return validationError("Invalid request body", validationResult.error.issues);
   }
 
   const { prompt_id, pack_id, action } = validationResult.data;

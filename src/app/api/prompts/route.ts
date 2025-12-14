@@ -24,7 +24,7 @@ async function GETHandler(request: Request) {
   
   const validationResult = GetPromptsQuerySchema.safeParse(queryParams);
   if (!validationResult.success) {
-    return validationError("Invalid query parameters", validationResult.error.errors);
+    return validationError("Invalid query parameters", validationResult.error.issues);
   }
 
   const { category, limit, offset } = validationResult.data;
