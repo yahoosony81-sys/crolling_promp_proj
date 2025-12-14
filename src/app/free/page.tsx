@@ -3,7 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/types/database";
 import { FreePromptsContent } from "./free-prompts-content";
 
-export const dynamic = "force-dynamic";
+// 무료 프롬프트 페이지는 1시간 캐시 (프롬프트는 자주 변경되지 않음)
+export const revalidate = 3600;
 
 const baseUrl =
   process.env.NEXT_PUBLIC_SITE_URL ||
@@ -47,9 +48,10 @@ type PromptTemplate = Database["public"]["Tables"]["prompt_templates"]["Row"];
 
 async function getAllFreePrompts() {
   const supabase = await createClient();
+  // 필요한 필드만 선택하여 데이터 전송량 감소
   const { data, error } = await supabase
     .from("prompt_templates")
-    .select("*")
+    .select("id, title, description, category, content, variables, example_inputs, created_at, updated_at")
     .eq("is_free", true)
     .order("created_at", { ascending: false });
 

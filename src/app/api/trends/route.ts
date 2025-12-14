@@ -69,10 +69,10 @@ async function GETHandler(request: Request) {
   // Supabase 클라이언트 생성
   const supabase = await createClient();
 
-  // 쿼리 빌더 생성
+  // 쿼리 빌더 생성 (필요한 필드만 선택)
   let query = supabase
     .from("trend_packs")
-    .select("*", { count: "exact" })
+    .select("id, week_key, category, title, summary, trend_keywords, status, generated_at, created_at, updated_at", { count: "exact" })
     .eq("status", "published")
     .order("created_at", { ascending: false });
 
@@ -98,18 +98,26 @@ async function GETHandler(request: Request) {
   const totalPages = Math.ceil(total / limit);
   const currentPage = Math.floor(offset / limit) + 1;
 
-  return NextResponse.json({
-    data: (data || []) as TrendPack[],
-    pagination: {
-      page: currentPage,
-      limit,
-      offset,
-      total,
-      totalPages,
-      hasNextPage: offset + limit < total,
-      hasPreviousPage: offset > 0,
+  // 캐시 헤더 설정 (인증된 사용자용, 1시간 캐시)
+  return NextResponse.json(
+    {
+      data: (data || []) as TrendPack[],
+      pagination: {
+        page: currentPage,
+        limit,
+        offset,
+        total,
+        totalPages,
+        hasNextPage: offset + limit < total,
+        hasPreviousPage: offset > 0,
+      },
     },
-  });
+    {
+      headers: {
+        "Cache-Control": "private, s-maxage=3600, stale-while-revalidate=86400",
+      },
+    }
+  );
 }
 
 export const GET = withErrorHandler(GETHandler);

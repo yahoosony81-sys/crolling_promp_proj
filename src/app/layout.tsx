@@ -11,11 +11,13 @@ import './globals.css';
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
+  display: 'swap', // 폰트 로딩 최적화
 });
 
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
+  display: 'swap', // 폰트 로딩 최적화
 });
 
 const baseUrl =
@@ -107,6 +109,13 @@ export default function RootLayout({
   return (
     <ClerkProvider localization={koKR}>
       <html lang="ko" suppressHydrationWarning>
+        <head>
+          {/* 리소스 힌트: 외부 도메인 사전 연결 */}
+          <link rel="preconnect" href="https://*.supabase.co" />
+          <link rel="dns-prefetch" href="https://*.supabase.co" />
+          <link rel="preconnect" href="https://*.clerk.accounts.dev" />
+          <link rel="dns-prefetch" href="https://*.clerk.accounts.dev" />
+        </head>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >

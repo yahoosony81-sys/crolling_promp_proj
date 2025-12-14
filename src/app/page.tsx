@@ -8,6 +8,9 @@ import { LatestTrendsSection } from "@/components/landing/latest-trends-section"
 import { FreePromptsSection } from "@/components/landing/free-prompts-section";
 import { CTASection } from "@/components/layout/cta-section";
 
+// 랜딩 페이지는 1시간 캐시 (트렌드 데이터는 주 1-2회 업데이트)
+export const revalidate = 3600;
+
 const baseUrl =
   process.env.NEXT_PUBLIC_SITE_URL ||
   process.env.NEXT_PUBLIC_APP_URL ||
@@ -50,9 +53,10 @@ type PromptTemplate = Database["public"]["Tables"]["prompt_templates"]["Row"];
 
 async function getLatestTrendPacks() {
   const supabase = await createClient();
+  // 필요한 필드만 선택하여 데이터 전송량 감소
   const { data, error } = await supabase
     .from("trend_packs")
-    .select("*")
+    .select("id, week_key, category, title, summary, trend_keywords, status, generated_at, created_at, updated_at")
     .eq("status", "published")
     .order("created_at", { ascending: false })
     .limit(2);
@@ -67,9 +71,10 @@ async function getLatestTrendPacks() {
 
 async function getFreePrompts() {
   const supabase = await createClient();
+  // 필요한 필드만 선택하여 데이터 전송량 감소
   const { data, error } = await supabase
     .from("prompt_templates")
-    .select("*")
+    .select("id, title, description, category, content, variables, example_inputs, created_at, updated_at")
     .eq("is_free", true)
     .order("created_at", { ascending: false })
     .limit(4);

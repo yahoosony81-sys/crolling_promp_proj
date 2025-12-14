@@ -12,7 +12,6 @@ import type { TrendPack } from "@/lib/types/trend";
 
 // 트렌드 데이터는 주 1-2회 업데이트되므로 1시간 캐시
 export const revalidate = 3600;
-export const dynamic = "force-dynamic";
 
 const baseUrl =
   process.env.NEXT_PUBLIC_SITE_URL ||
@@ -57,9 +56,10 @@ async function getLatestWeekPacks() {
     const currentWeekKey = getCurrentWeekKey();
     const supabase = await createClient();
     
+    // 필요한 필드만 선택하여 데이터 전송량 감소, week_key 인덱스 활용
     const { data, error } = await supabase
       .from("trend_packs")
-      .select("*")
+      .select("id, week_key, category, title, summary, trend_keywords, status, generated_at, created_at, updated_at")
       .eq("week_key", currentWeekKey)
       .eq("status", "published")
       .order("category", { ascending: true });
@@ -81,9 +81,10 @@ async function getAllTrendPacks() {
   try {
     const supabase = await createClient();
     
+    // 필요한 필드만 선택하여 데이터 전송량 감소
     const { data, error } = await supabase
       .from("trend_packs")
-      .select("*")
+      .select("id, week_key, category, title, summary, trend_keywords, status, generated_at, created_at, updated_at")
       .eq("status", "published")
       .order("created_at", { ascending: false });
 

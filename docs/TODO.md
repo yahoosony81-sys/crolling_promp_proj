@@ -567,7 +567,17 @@
     - [x] `next.config.ts` 보안 헤더 설정 추가 (Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Referrer-Policy 등)
 
 ## 성능 최적화
-- [ ] 데이터베이스 쿼리 최적화
-- [ ] 이미지 최적화
-- [ ] 코드 스플리팅
-- [ ] 캐싱 전략 구현
+- [x] 데이터베이스 쿼리 최적화
+- [x] 이미지 최적화
+- [x] 코드 스플리팅
+- [x] 캐싱 전략 구현
+  ---
+  - [x] 성능 최적화 구현 세부 작업 (plan 모드 build)
+    - [x] 데이터베이스 쿼리 최적화: N+1 문제 해결, 선택 필드 최적화 (`select("*")` 대신 필요한 필드만 선택), 인덱스 활용
+    - [x] 이미지 최적화: `next.config.ts`에 이미지 최적화 설정 추가 (AVIF, WebP 포맷, deviceSizes, imageSizes 설정)
+    - [x] 코드 스플리팅: 큰 라이브러리 및 컴포넌트 동적 임포트 (`PaymentWidget`, `UserProfile`, `PromptDetailModal`)
+    - [x] 페이지 레벨 캐싱: `revalidate` 설정 추가 (`page.tsx`: 1시간, `free/page.tsx`: 1시간, `packs/[id]/page.tsx`: 30분, `trends/page.tsx`: 1시간)
+    - [x] API 라우트 캐싱: `Cache-Control` 헤더 설정 (`/api/prompts`, `/api/trends`, `/api/trends/[id]`, `/api/prompts/[id]`)
+    - [x] 폰트 최적화: `font-display: swap` 설정 (`layout.tsx`)
+    - [x] 리소스 힌트: `preconnect`, `dns-prefetch` 추가 (Supabase, Clerk 도메인)
+    - [x] 번들 크기 분석 스크립트 추가 (`package.json`에 `analyze` 스크립트 추가)

@@ -10,7 +10,8 @@ import { PackDetailSkeleton } from "./loading";
 import type { TrendPack, ScrapedItem } from "@/lib/types/trend";
 import type { Database } from "@/lib/types/database";
 
-export const dynamic = "force-dynamic";
+// 패키지 상세 페이지는 30분 캐시 (트렌드 데이터는 주 1-2회 업데이트)
+export const revalidate = 1800;
 
 type PromptTemplate = Database["public"]["Tables"]["prompt_templates"]["Row"];
 type PackPrompt = Database["public"]["Tables"]["pack_prompts"]["Row"];
@@ -23,9 +24,10 @@ async function getPackById(id: string): Promise<TrendPack | null> {
   try {
     const supabase = await createClient();
     
+    // 필요한 필드만 선택하여 데이터 전송량 감소
     const { data, error } = await supabase
       .from("trend_packs")
-      .select("*")
+      .select("id, week_key, category, title, summary, trend_keywords, status, generated_at, created_at, updated_at")
       .eq("id", id)
       .eq("status", "published")
       .maybeSingle();
@@ -46,9 +48,10 @@ async function getScrapedItems(packId: string): Promise<ScrapedItem[]> {
   try {
     const supabase = await createClient();
     
+    // 필요한 필드만 선택하여 데이터 전송량 감소, pack_id 인덱스 활용
     const { data, error } = await supabase
       .from("scraped_items")
-      .select("*")
+      .select("id, pack_id, source_domain, source_type, url, title, summary, tags, extracted_data, scraped_at, created_at")
       .eq("pack_id", packId)
       .order("scraped_at", { ascending: false });
 
@@ -68,11 +71,27 @@ async function getPackPrompts(packId: string): Promise<PackWithPrompts[]> {
   try {
     const supabase = await createClient();
     
+    // 조인 쿼리로 N+1 문제 방지, 필요한 필드만 선택
     const { data, error } = await supabase
       .from("pack_prompts")
       .select(`
-        *,
-        prompt_templates (*)
+        id,
+        pack_id,
+        prompt_id,
+        sort_order,
+        created_at,
+        prompt_templates (
+          id,
+          is_free,
+          title,
+          description,
+          category,
+          content,
+          variables,
+          example_inputs,
+          created_at,
+          updated_at
+        )
       `)
       .eq("pack_id", packId)
       .order("sort_order", { ascending: true });

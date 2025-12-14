@@ -36,10 +36,10 @@ async function GETHandler(
   // Supabase 클라이언트 생성
   const supabase = await createClient();
 
-  // 패키지 조회 (published 상태만)
+  // 패키지 조회 (published 상태만, 필요한 필드만 선택)
   const { data, error } = await supabase
     .from("trend_packs")
-    .select("*")
+    .select("id, week_key, category, title, summary, trend_keywords, status, generated_at, created_at, updated_at")
     .eq("id", id)
     .eq("status", "published")
     .single();
@@ -59,7 +59,15 @@ async function GETHandler(
     return notFound("Trend pack not found");
   }
 
-  return NextResponse.json({ data: data as TrendPack });
+  // 캐시 헤더 설정 (패키지 상세는 30분 캐시)
+  return NextResponse.json(
+    { data: data as TrendPack },
+    {
+      headers: {
+        "Cache-Control": "private, s-maxage=1800, stale-while-revalidate=86400",
+      },
+    }
+  );
 }
 
 export const GET = withErrorHandler(GETHandler);

@@ -1,8 +1,23 @@
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import { PaymentWidget } from "@/components/checkout/payment-widget";
+import dynamic from "next/dynamic";
 
 export const dynamic = "force-dynamic";
+
+// PaymentWidget을 동적 임포트하여 초기 번들 크기 감소
+const PaymentWidget = dynamic(
+  () => import("@/components/checkout/payment-widget").then((mod) => ({ default: mod.PaymentWidget })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center py-8">
+        <div className="text-center">
+          <p className="text-muted-foreground">결제 시스템을 불러오는 중...</p>
+        </div>
+      </div>
+    ),
+  }
+);
 
 /**
  * 결제 페이지

@@ -37,10 +37,10 @@ async function GETHandler(
   // Supabase 클라이언트 생성
   const supabase = await createClient();
 
-  // 프롬프트 조회
+  // 프롬프트 조회 (필요한 필드만 선택)
   const { data, error } = await supabase
     .from("prompt_templates")
-    .select("*")
+    .select("id, is_free, title, description, category, content, variables, example_inputs, created_at, updated_at")
     .eq("id", id)
     .single();
 
@@ -61,16 +61,30 @@ async function GETHandler(
 
   const prompt = data as PromptTemplate;
 
-  // 무료 프롬프트는 공개 조회 가능
+  // 무료 프롬프트는 공개 조회 가능 (1시간 캐시)
   if (prompt.is_free) {
-    return NextResponse.json({ data: prompt });
+    return NextResponse.json(
+      { data: prompt },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+        },
+      }
+    );
   }
 
-  // 유료 프롬프트는 인증 및 구독 필요
+  // 유료 프롬프트는 인증 및 구독 필요 (30분 캐시)
   await requireSubscription();
 
   // 유료 프롬프트 반환
-  return NextResponse.json({ data: prompt });
+  return NextResponse.json(
+    { data: prompt },
+    {
+      headers: {
+        "Cache-Control": "private, s-maxage=1800, stale-while-revalidate=86400",
+      },
+    }
+  );
 }
 
 export const GET = withErrorHandler(GETHandler);

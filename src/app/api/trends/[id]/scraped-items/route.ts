@@ -66,10 +66,10 @@ async function GETHandler(
     return notFound("Trend pack not found or not published");
   }
 
-  // 스크랩 아이템 조회
+  // 스크랩 아이템 조회 (필요한 필드만 선택, pack_id 인덱스 활용)
   const { data, error, count } = await supabase
     .from("scraped_items")
-    .select("*", { count: "exact" })
+    .select("id, pack_id, source_domain, source_type, url, title, summary, tags, extracted_data, scraped_at, created_at", { count: "exact" })
     .eq("pack_id", id)
     .order("scraped_at", { ascending: false })
     .range(offset, offset + limit - 1);

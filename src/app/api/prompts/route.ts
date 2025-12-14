@@ -32,10 +32,10 @@ async function GETHandler(request: Request) {
   // Supabase 클라이언트 생성
   const supabase = await createClient();
 
-  // 쿼리 빌더 생성
+  // 쿼리 빌더 생성 (필요한 필드만 선택)
   let query = supabase
     .from("prompt_templates")
-    .select("*", { count: "exact" })
+    .select("id, title, description, category, content, variables, example_inputs, created_at, updated_at", { count: "exact" })
     .eq("is_free", true)
     .order("created_at", { ascending: false });
 
@@ -56,18 +56,26 @@ async function GETHandler(request: Request) {
   const totalPages = Math.ceil(total / limit);
   const currentPage = Math.floor(offset / limit) + 1;
 
-  return NextResponse.json({
-    data: (data || []) as PromptTemplate[],
-    pagination: {
-      page: currentPage,
-      limit,
-      offset,
-      total,
-      totalPages,
-      hasNextPage: offset + limit < total,
-      hasPreviousPage: offset > 0,
+  // 캐시 헤더 설정 (무료 프롬프트는 1시간 캐시)
+  return NextResponse.json(
+    {
+      data: (data || []) as PromptTemplate[],
+      pagination: {
+        page: currentPage,
+        limit,
+        offset,
+        total,
+        totalPages,
+        hasNextPage: offset + limit < total,
+        hasPreviousPage: offset > 0,
+      },
     },
-  });
+    {
+      headers: {
+        "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+      },
+    }
+  );
 }
 
 export const GET = withErrorHandler(GETHandler);

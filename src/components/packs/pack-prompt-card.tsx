@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import {
   Card,
   CardContent,
@@ -11,8 +12,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/prompts/copy-button";
-import { PromptDetailModal } from "@/components/prompts/prompt-detail-modal";
 import type { Database } from "@/lib/types/database";
+
+// PromptDetailModal을 동적 임포트하여 모달이 열릴 때만 로드
+const PromptDetailModal = dynamic(
+  () => import("@/components/prompts/prompt-detail-modal").then((mod) => ({ default: mod.PromptDetailModal })),
+  { ssr: false }
+);
 
 type PromptTemplate = Database["public"]["Tables"]["prompt_templates"]["Row"];
 type PackPrompt = Database["public"]["Tables"]["pack_prompts"]["Row"];
