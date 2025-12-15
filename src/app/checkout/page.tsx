@@ -1,23 +1,8 @@
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import nextDynamic from "next/dynamic";
+import { CheckoutContent } from "@/components/checkout/checkout-content";
 
 export const dynamic = "force-dynamic";
-
-// PaymentWidget을 동적 임포트하여 초기 번들 크기 감소
-const PaymentWidget = nextDynamic(
-  () => import("@/components/checkout/payment-widget").then((mod) => ({ default: mod.PaymentWidget })),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="flex items-center justify-center py-8">
-        <div className="text-center">
-          <p className="text-muted-foreground">결제 시스템을 불러오는 중...</p>
-        </div>
-      </div>
-    ),
-  }
-);
 
 /**
  * 결제 페이지
@@ -60,7 +45,7 @@ export default async function CheckoutPage() {
           월 9,900원으로 매주 업데이트되는 트렌드 프롬프트를 이용하세요
         </p>
 
-        <PaymentWidget
+        <CheckoutContent
           clientKey={clientKey}
           customerKey={customerKey}
           successUrl={successUrl}
