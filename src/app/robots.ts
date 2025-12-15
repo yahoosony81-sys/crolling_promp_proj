@@ -28,7 +28,6 @@ export default function robots(): MetadataRoute.Robots {
           "/checkout/*",
           "/login",
           "/sign-up",
-          "/instruments",
         ],
       },
       // Google Bot 특별 설정
@@ -48,7 +47,6 @@ export default function robots(): MetadataRoute.Robots {
           "/checkout/*",
           "/login",
           "/sign-up",
-          "/instruments",
         ],
       },
       // Naver Bot 특별 설정
@@ -68,7 +66,6 @@ export default function robots(): MetadataRoute.Robots {
           "/checkout/*",
           "/login",
           "/sign-up",
-          "/instruments",
         ],
       },
     ],
