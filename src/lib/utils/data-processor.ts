@@ -277,7 +277,7 @@ export function applyCategorySummaryTemplate(
       const changeRate = extracted.changeRate;
       const parts = [item.title];
       if (price) parts.push(`주가: ${price}`);
-      if (changeRate !== undefined) {
+      if (changeRate != null && typeof changeRate === "number") {
         const sign = changeRate >= 0 ? "+" : "";
         parts.push(`등락률: ${sign}${changeRate}%`);
       }

@@ -17,7 +17,13 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
-const navigationItems = [
+type NavigationItem = {
+  readonly href: string;
+  readonly label: string;
+  readonly requiresAuth?: boolean;
+};
+
+const navigationItems: readonly NavigationItem[] = [
   { href: "/", label: "홈" },
   { href: "/free", label: "무료 프롬프트" },
   { href: "/trends", label: "트렌드 패키지", requiresAuth: true },

@@ -131,26 +131,28 @@ export function parseVariableGuide(variables: Json): VariableGuide[] {
     return [];
   }
 
-  return variables
-    .map((item) => {
-      // 객체인지 확인
-      if (!item || typeof item !== "object" || Array.isArray(item)) {
-        return null;
-      }
+  const result: VariableGuide[] = [];
 
-      // name 필드가 있는지 확인
-      if (typeof item.name !== "string") {
-        return null;
-      }
+  for (const item of variables) {
+    // 객체인지 확인
+    if (!item || typeof item !== "object" || Array.isArray(item)) {
+      continue;
+    }
 
-      return {
-        name: item.name,
-        description:
-          typeof item.description === "string" ? item.description : undefined,
-        example: typeof item.example === "string" ? item.example : undefined,
-      };
-    })
-    .filter((item): item is VariableGuide => item !== null);
+    // name 필드가 있는지 확인
+    if (typeof item.name !== "string") {
+      continue;
+    }
+
+    result.push({
+      name: item.name,
+      description:
+        typeof item.description === "string" ? item.description : undefined,
+      example: typeof item.example === "string" ? item.example : undefined,
+    });
+  }
+
+  return result;
 }
 
 /**

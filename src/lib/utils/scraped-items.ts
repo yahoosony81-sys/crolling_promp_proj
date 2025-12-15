@@ -4,6 +4,7 @@
 
 import { createAdminClient } from "@/lib/supabase/server-admin";
 import type { ScrapedItemData } from "@/lib/types/crawler";
+import type { Json } from "@/lib/types/database";
 import { checkDuplicateUrl, validateScrapedData } from "./crawler";
 
 /**
@@ -60,7 +61,7 @@ export async function saveScrapedItems(
     title: item.title,
     summary: item.summary,
     tags: item.tags || [],
-    extracted_data: item.extracted_data || {},
+    extracted_data: (item.extracted_data || {}) as Json,
     scraped_at: new Date().toISOString(),
   }));
 

@@ -65,7 +65,7 @@ function PaginationLink({
           }),
           className
         )}
-        onClick={onClick}
+        onClick={onClick as React.MouseEventHandler<HTMLButtonElement> | undefined}
         {...(props as React.ComponentProps<"button">)}
       />
     );

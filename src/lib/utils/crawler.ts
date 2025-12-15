@@ -5,6 +5,7 @@
 import * as cheerio from "cheerio";
 import type { ScrapedItemData, CrawlConfig } from "@/lib/types/crawler";
 import { getCrawlerConfig, getSourcesForCategory, type ValidCategory } from "@/lib/config/crawler-config";
+import { canRetryError, classifyError, logCrawlWarn, logCrawlError } from "./crawl-logger";
 
 /**
  * 재시도 로직 (Exponential Backoff)

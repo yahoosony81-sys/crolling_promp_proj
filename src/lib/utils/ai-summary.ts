@@ -34,7 +34,7 @@ export function shouldUseAISummary(content: string): boolean {
     content.includes("-") ||
     content.includes("1.") ||
     content.includes("2.") ||
-    content.match(/\d+\.\s+/g)?.length || 0 > 3;
+    (content.match(/\d+\.\s+/g)?.length || 0) > 3;
 
   return hasComplexStructure;
 }
