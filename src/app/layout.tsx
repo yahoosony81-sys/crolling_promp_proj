@@ -118,13 +118,6 @@ export default function RootLayout({
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
     >
       <html lang="ko" suppressHydrationWarning>
-        <head>
-          {/* 리소스 힌트: 외부 도메인 사전 연결 */}
-          <link rel="preconnect" href="https://*.supabase.co" />
-          <link rel="dns-prefetch" href="https://*.supabase.co" />
-          <link rel="preconnect" href="https://*.clerk.accounts.dev" />
-          <link rel="dns-prefetch" href="https://*.clerk.accounts.dev" />
-        </head>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
