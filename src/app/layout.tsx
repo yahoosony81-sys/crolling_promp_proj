@@ -112,10 +112,21 @@ export default function RootLayout({
     console.log('App URL:', process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || '없음');
   }
 
+  // 프로덕션 환경에서 domain 설정
+  const domain = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL;
+  const clerkDomain = domain ? new URL(domain).hostname : undefined;
+
   return (
     <ClerkProvider 
       localization={koKR}
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      {...(clerkDomain ? { domain: clerkDomain } : {})}
+      appearance={{
+        baseTheme: undefined, // 시스템 테마 사용
+        variables: {
+          colorPrimary: 'hsl(var(--primary))',
+        },
+      }}
     >
       <html lang="ko" suppressHydrationWarning>
         <body

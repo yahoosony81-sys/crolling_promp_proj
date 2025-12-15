@@ -59,7 +59,7 @@ const nextConfig: NextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.tosspayments.com https://*.clerk.accounts.dev https://challenges.cloudflare.com",
               "style-src 'self' 'unsafe-inline' https://*.clerk.accounts.dev",
-              "img-src 'self' data: https: blob:",
+              "img-src 'self' data: https: blob: https://img.clerk.com",
               "font-src 'self' data: https://*.clerk.accounts.dev",
               "connect-src 'self' https://api.tosspayments.com https://*.supabase.co https://*.clerk.accounts.dev https://challenges.cloudflare.com",
               "frame-src 'self' https://js.tosspayments.com https://*.clerk.accounts.dev https://challenges.cloudflare.com",
