@@ -115,11 +115,15 @@ export default function RootLayout({
   // 프로덕션 환경에서 domain 설정
   const domain = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL;
   const clerkDomain = domain ? new URL(domain).hostname : undefined;
+  const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || '';
+
+  // Clerk 타입 정의 버그로 인한 임시 해결책
+  const ClerkProviderAny = ClerkProvider as any;
 
   return (
-    <ClerkProvider 
+    <ClerkProviderAny 
       localization={koKR}
-      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      publishableKey={publishableKey}
       {...(clerkDomain ? { domain: clerkDomain } : {})}
       appearance={{
         baseTheme: undefined, // 시스템 테마 사용
