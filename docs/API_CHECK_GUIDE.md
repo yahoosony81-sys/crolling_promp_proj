@@ -480,3 +480,4 @@ src/app/api/trends/[id]/route.ts
 
 **요약: 각 API는 `src/app/api/` 폴더 안에 있으며, 브라우저나 Postman으로 확인할 수 있습니다. 로그인이 필요한 API는 인증 토큰을 헤더에 포함해야 합니다!**
 
+

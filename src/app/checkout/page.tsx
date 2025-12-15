@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import dynamic from "next/dynamic";
+import nextDynamic from "next/dynamic";
 
 export const dynamic = "force-dynamic";
 
 // PaymentWidget을 동적 임포트하여 초기 번들 크기 감소
-const PaymentWidget = dynamic(
+const PaymentWidget = nextDynamic(
   () => import("@/components/checkout/payment-widget").then((mod) => ({ default: mod.PaymentWidget })),
   {
     ssr: false,
