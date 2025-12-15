@@ -3,12 +3,11 @@
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import dynamic from "next/dynamic";
+import nextDynamic from "next/dynamic";
 
-export const dynamic = "force-dynamic";
-
+// Client Component에서는 export const dynamic을 사용할 수 없으므로 제거
 // UserProfile을 동적 임포트하여 초기 번들 크기 감소
-const UserProfile = dynamic(
+const UserProfile = nextDynamic(
   () => import("@clerk/nextjs").then((mod) => ({ default: mod.UserProfile })),
   {
     ssr: false,
